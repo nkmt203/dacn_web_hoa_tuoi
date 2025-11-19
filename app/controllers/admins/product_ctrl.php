@@ -11,7 +11,7 @@ class ProductController
         $this->model = new ProductModel();
     }
 
-    public function loadListProduct()
+    public function listProduct()
     {
         $listProduct = $this->model->getAllProduct();
         $viewFile = "../../views/admins/products/list_product.php";
@@ -20,7 +20,7 @@ class ProductController
 
     public function addProduct()
     {
-        if (isset($_POST['AddProduct']) && $_POST['AddProduct']) {
+        if (isset($_POST['btnAddProduct']) && $_POST['btnAddProduct']) {
             $product_name = $_POST['product_name'];
             $price = $_POST['price'];
             $description = $_POST['description'];
@@ -31,10 +31,11 @@ class ProductController
 
             $addProduct = $this->model->addProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id);
             if ($addProduct) {
-                header('Location: index.php?controller=product&action=loadListProduct');
+                header('Location: index.php?controller=product&action=listProduct');
                 exit;
             } else {
                 $error = "Thêm thất bại";
+                echo $error;
             }
         }
         $viewFile = "../../views/admins/products/add_product.php";
@@ -46,7 +47,7 @@ class ProductController
             $product_id = $_GET['product_id'];
             $deleteProduct = $this->model->deleteProduct($product_id);
             if ($deleteProduct) {
-                header("Location: index.php?controller=product&action=loadListProduct");
+                header("Location: index.php?controller=product&action=listProduct");
                 exit;
             } else {
                 echo "Xóa thất bại";

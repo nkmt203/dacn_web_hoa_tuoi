@@ -27,11 +27,11 @@
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="nav-text">Trang chủ</span>
             </a>
-            <a class="nav-link" href="index.php?controller=product&action=loadListProduct">
+            <a class="nav-link" href="index.php?controller=product&action=listProduct">
                 <i class="fas fa-box"></i>
                 <span class="nav-text">Sản phẩm</span>
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="index.php?controller=category&action=listCategory">
                 <i class="fa-solid fa-table-list"></i>
                 <span class="nav-text">Danh mục</span>
             </a>

@@ -22,7 +22,7 @@ switch ($controllerURL) {
         $controllerPath = "../../controllers/admins/product_ctrl.php";
         break;
     case 'category':
-        //$controllerPath = "../../controllers/admins/product_ctrl.php";
+        $controllerPath = "../../controllers/admins/category_ctrl.php";
         break;
     default:
         break;

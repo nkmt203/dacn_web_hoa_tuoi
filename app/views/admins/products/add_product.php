@@ -68,6 +68,6 @@ $listEnumStatus = $product->getValueEnumStatus();
         <?php endforeach; ?>
     </select><br>
 
-    <input type="submit" value="Thêm" id="AddProduct" name="AddProduct">
+    <input type="submit" value="Thêm" name="btnAddProduct">
 </form>
 </body>

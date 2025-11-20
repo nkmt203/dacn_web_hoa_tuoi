@@ -2,11 +2,15 @@
 require_once __DIR__ . '/../../../models/category_model.php';
 require_once __DIR__ . '/../../../models/product_model.php';
 require_once __DIR__ . '/../../../../config/config.php';
-$category = new CategoryModel();
-$listCategory = $category->getAllCategory();
+$categoryModel = new CategoryModel();
+$listCategory = $categoryModel->getAllCategory();
 
-$product = new ProductModel();
-$listEnumStatus = $product->getValueEnumStatus();
+$productModel = new ProductModel();
+$listEnumStatus = $productModel->getValueEnumStatus();
+
+$product_id = $_GET['product_id'];
+$oneProduct = $productModel->getByIdProduct($product_id);
+
 
 ?>
 
@@ -23,30 +27,30 @@ $listEnumStatus = $product->getValueEnumStatus();
 </head>
 
 <body>
-
-    <form action="index.php?controller=product&action=addProduct" method="post" enctype="multipart/form-data">
+    <form action="index.php?controller=product&action=updateProduct&product_id=<?= $oneProduct['product_id'] ?>" method="post" enctype="multipart/form-data">
+        <label for="product_id">Mã sản phẩm: <?= $oneProduct['product_id'] ?></label>
         <label for="product_name">Tên sản phẩm:</label>
-        <input type="text" id="product_name" name="product_name" required> <br>
+        <input type="text" id="product_name" name="product_name" value="<?= $oneProduct['product_name'] ?>" required> <br>
 
         <label for="price">Giá:</label>
-        <input type="number" id="p4rice" name="price" required> <br>
+        <input type="number" id="price" name="price" value="<?= $oneProduct['price'] ?>" required> <br>
 
         <label for="description">Mô tả:</label>
-        <textarea name="description" id="description"></textarea> <br>
+        <textarea name="description" id="description"><?= $oneProduct['description'] ?></textarea> <br>
 
         <label for="image_url">Hình ảnh</label>
         <input type="file" id="image_url" name="image_url" onchange="ViewImage(event)"><br>
-        <img src="" alt="" id="preview" style="width: 250px;"><br>
+        <img src="../../../../uploads/<?= $oneProduct['image_url'] ?>" alt="" id="preview" style="width: 250px;"><br>
 
         <label for="stock_quantity">Số lượng</label>
-        <input type="number" id="stock_quantity" name="stock_quantity" required><br>
+        <input type="number" id="stock_quantity" name="stock_quantity" value="<?= $oneProduct['stock_quantity'] ?>" required><br>
 
 
         <label for="status">Trạng thái</label>
         <select name="status" id="status">
             <option value="">--Trạng thái--</option>
             <?php foreach ($listEnumStatus as $status): ?>
-                <option value="<?= $status ?>">
+                <option value="<?= $status ?>" <?= ($status == $oneProduct['status']) ? 'selected' : '' ?>>
                     <?php
                     if ($status == 'available')
                         echo "Còn hàng (" . $status . ")";
@@ -63,11 +67,13 @@ $listEnumStatus = $product->getValueEnumStatus();
         <select name="category_id" id="category_id">
             <option value="">--Chọn danh mục--</option>
             <?php foreach ($listCategory as $c): ?>
-                <option value=" <?= $c['category_id'] ?> "><?= $c['category_name'] ?></option>
+                <option value=" <?= $c['category_id'] ?> " <?= ($c['category_id'] == $oneProduct['category_id']) ? 'selected' : '' ?>>
+                    <?= $c['category_name'] ?>
+                </option>
             <?php endforeach; ?>
         </select><br>
 
-        <input type="submit" value="Thêm" name="btnAddProduct">
+        <input type="submit" value="Cập nhật" name="btnUpdateProduct">
     </form>
 </body>
 

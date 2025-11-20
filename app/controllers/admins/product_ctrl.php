@@ -41,6 +41,7 @@ class ProductController
         $viewFile = "../../views/admins/products/add_product.php";
         include __DIR__ . '/../../views/admins/dashboard.php';
     }
+
     public function deleteProduct()
     {
         if (isset($_GET['product_id'])) {
@@ -55,5 +56,30 @@ class ProductController
         } else {
             echo "<h2>Không có ID nào để xóa!!</h2>";
         }
+    }
+
+    public function updateProduct()
+    {
+        $product_id = $_GET['product_id'];
+        if (isset($_POST['btnUpdateProduct']) && $_POST['btnUpdateProduct'] && $product_id) {
+            $product_name = $_POST['product_name'];
+            $price = $_POST['price'];
+            $description = $_POST['description'];
+            $image_url = uploadImage($_FILES['image_url']);
+            $stock_quantity = $_POST['stock_quantity'];
+            $status = $_POST['status'];
+            $category_id = $_POST['category_id'];
+            $updateProduct = $this->model->updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id);
+            if ($updateProduct) {
+                header("Location: index.php?controller=product&action=listProduct");
+                exit;
+            } else {
+                echo "Cập nhật thất bại";
+            }
+        } else {
+            echo "Không tìm thấy ID cập nhật";
+        }
+        $viewFile = "../../views/admins/products/update_product.php";
+        include __DIR__ . '/../../views/admins/dashboard.php';
     }
 }

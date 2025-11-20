@@ -57,4 +57,41 @@ class ProductModel
         }
         return false;
     }
+
+    public function getByIdProduct($product_id)
+    {
+        $pdo = pdo_connect();
+        $sql = "SELECT *FROM products WHERE product_id=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$product_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id,$product_id)
+    {
+        $pdo = pdo_connect();
+        // Trường hợp:
+        //1. update nhưng không update ảnh
+        if ($image_url === null) {
+            $sql = "UPDATE products 
+            SET product_name=?,price=?,description=?,stock_quantity=?,status=?, category_id=? 
+            WHERE product_id=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$product_name, $price, $description, $stock_quantity, $status, $category_id,$product_id]);
+            return $stmt->rowCount()>0;
+        }
+        //2. update nhưng có update cả ảnh thì xóa ảnh của product hiện tại thay = ảnh mới
+        else {
+            $current_image_url = $this->getByIdProduct($product_id);
+            if (!empty($current_image_url['image_url']) && $current_image_url) {
+                deleteImage($current_image_url['image_url']);
+            }
+            $sql = "UPDATE products 
+                SET product_name=?,price=?,description=?,image_url=?,stock_quantity=?,status=?, category_id=? 
+                WHERE product_id=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id,$product_id]);
+            return $stmt->rowCount()>0;
+        }
+    }
 }

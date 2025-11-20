@@ -7,7 +7,10 @@ body {
 }
 
 /* Tiêu đề */
-h1, h2, h3, title {
+h1,
+h2,
+h3,
+title {
     color: #2c3e50;
     text-align: center;
 }
@@ -19,7 +22,7 @@ form {
     background: #fff;
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Label */
@@ -43,6 +46,10 @@ form select {
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.3s;
+}
+
+form textarea {
+    height: 200px;
 }
 
 form input:focus,

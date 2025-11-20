@@ -28,7 +28,6 @@ $oneCategory = $categoryModel->getByIdCategory($category_id);
 
         <input type="submit" value="Cập nhật" name="btnUpdateCategory">
     </form>
+</body>
 
 </html>
-
-</body>

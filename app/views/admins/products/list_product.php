@@ -20,7 +20,7 @@
 
 <body>
     <h2>Danh sách sản phẩm</h2>
-    <a href="index.php?controller=product&action=addProduct">Thêm sản phẩm</a>
+    <a href="index.php?controller=product&action=addProduct">Thêm mới sản phẩm</a>
     <table>
         <thead>
             <tr>
@@ -68,9 +68,11 @@
                     <td><?= $p['created_at'] ?></td>
                     <td><?= $p['updated_at'] ?></td>
                     <td>
-                        <a href="#">
+                        <a href="index.php?controller=product&action=updateProduct&product_id=<?= $p['product_id'] ?>"
+                            onclick="return confirm('Bạn có chắc muốn cập nhật')">
                             <i class="fa-solid fa-pen-to-square"></i></a> /
-                        <a href="index.php?controller=product&action=deleteProduct&product_id=<?= $p['product_id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa')">
+                        <a href="index.php?controller=product&action=deleteProduct&product_id=<?= $p['product_id'] ?>"
+                            onclick="return confirm('Bạn có chắc muốn xóa')">
                             <i class="fa-solid fa-trash"></i></a>
                     </td>
                 </tr>

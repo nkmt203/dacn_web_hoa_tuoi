@@ -67,7 +67,7 @@ class ProductModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id,$product_id)
+    public function updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id)
     {
         $pdo = pdo_connect();
         // Trường hợp:
@@ -77,8 +77,8 @@ class ProductModel
             SET product_name=?,price=?,description=?,stock_quantity=?,status=?, category_id=? 
             WHERE product_id=?";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$product_name, $price, $description, $stock_quantity, $status, $category_id,$product_id]);
-            return $stmt->rowCount()>0;
+            $stmt->execute([$product_name, $price, $description, $stock_quantity, $status, $category_id, $product_id]);
+            return $stmt;
         }
         //2. update nhưng có update cả ảnh thì xóa ảnh của product hiện tại thay = ảnh mới
         else {
@@ -90,8 +90,35 @@ class ProductModel
                 SET product_name=?,price=?,description=?,image_url=?,stock_quantity=?,status=?, category_id=? 
                 WHERE product_id=?";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id,$product_id]);
-            return $stmt->rowCount()>0;
+            $stmt->execute([$product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id]);
+            return $stmt;
         }
     }
+
+    // Hàm phân trang 
+    public function getProductPagination($limit, $offset)
+    {
+        $pdo = pdo_connect();
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+
+        $sql = "SELECT p.product_id ,p.product_name AS product_name, p.price, p.description,p.image_url,
+                   p.stock_quantity, p.status, c.category_name, p.created_at,p.updated_at
+            FROM products p 
+            JOIN categories c ON p.category_id = c.category_id 
+            ORDER BY p.product_id DESC
+            LIMIT $limit OFFSET $offset";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalProduct()
+    {
+        $pdo = pdo_connect();
+        $sql = "SELECT COUNT(*) FROM products";
+        $stmt = $pdo->query($sql);
+        return $stmt->fetchColumn();
+    }
+    // END Hàm phân trang 
 }

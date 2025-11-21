@@ -13,10 +13,20 @@ class ProductController
 
     public function listProduct()
     {
-        $listProduct = $this->model->getAllProduct();
+        $limit = 5; // số sản phẩm / trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $listProduct = $this->model->getProductPagination($limit, $offset);
+
+        // tính tổng số trang nếu muốn hiển thị pagination
+        $totalProducts = $this->model->getTotalProduct();
+        $totalPages = ceil($totalProducts / $limit);
+
         $viewFile = "../../views/admins/products/list_product.php";
         include __DIR__ . '/../../views/admins/dashboard.php';
     }
+
 
     public function addProduct()
     {

@@ -49,6 +49,6 @@ class CategoryModel
         $sql = "UPDATE categories SET category_name=?, description=? WHERE category_id=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$category_id, $category_name, $description]);
-        return $stmt->rowCount() > 0;
+        return $stmt;
     }
 }

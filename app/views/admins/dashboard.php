@@ -88,44 +88,11 @@
 
     <!-- Main Content -->
     <div class="main-content pt-5">
-        <h2 class="mb-4 text-dark" style="margin-top: 20px;">Tổng quan hệ thống</h2>
-
-        <!-- Stats Cards -->
-        <div class="row g-4 mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h6 class="text-muted">Tổng người dùng</h6>
-                    <h3 class="text-primary fw-bold">1,234</h3>
-                    <i class="fas fa-users stat-icon text-primary"></i>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h6 class="text-muted">Đơn hàng</h6>
-                    <h3 class="text-success fw-bold">567</h3>
-                    <i class="fas fa-shopping-cart stat-icon text-success"></i>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h6 class="text-muted">Doanh thu</h6>
-                    <h3 class="text-warning fw-bold">89,000,000đ</h3>
-                    <i class="fas fa-coins stat-icon text-warning"></i>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h6 class="text-muted">Nhiệm vụ chờ</h6>
-                    <h3 class="text-danger fw-bold">12</h3>
-                    <i class="fas fa-tasks stat-icon text-danger"></i>
-                </div>
-            </div>
-        </div>
         <?php
         if (isset($viewFile) && file_exists($viewFile))
             include $viewFile;
         ?>
-
+    </div>
 </body>
 
 </html>

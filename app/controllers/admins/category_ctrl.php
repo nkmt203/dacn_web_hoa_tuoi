@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../models/category_model.php';
+require_once __DIR__ . '/../../../helpers/message_helper.php';
 class CategoryController
 {
     private $model;
@@ -23,10 +24,11 @@ class CategoryController
             $addCategory = $this->model->addCategory($category_name, $description);
 
             if ($addCategory) {
+                MessageHelper::success("Thêm danh mục thành công !!!");
                 header("Location: index.php?controller=category&action=listCategory");
                 exit;
             } else {
-                echo "Thêm thất bại";
+                MessageHelper::error("Thêm danh mục thất bại !!!");
             }
         }
         $viewFile = "../../views/admins/categories/add_category.php";
@@ -39,10 +41,11 @@ class CategoryController
         if (isset($category_id)) {
             $deleteCategory = $this->model->deleteCategory($category_id);
             if ($deleteCategory) {
+                MessageHelper::success("Xóa thành công danh mục này !!!");
                 header("Location: index.php?controller=category&action=listCategory");
                 exit;
             } else {
-                echo "Xóa thất bại";
+                MessageHelper::error("Xóa danh mục thất bại !!!");
             }
         } else {
             echo "<h2>Không có ID nào để xóa</h2>";
@@ -58,10 +61,11 @@ class CategoryController
             $updateCategory = $this->model->updateCategory($category_name, $description, $category_id);
 
             if ($updateCategory) {
+                MessageHelper::success("Cập nhật thành công !!!");
                 header("Location: index.php?controller=category&action=listCategory");
                 exit;
             } else {
-                echo "Cập nhật thất bại";
+                MessageHelper::error("Cập nhật thất bại !!!");
             }
         }
         $viewFile = "../../views/admins/categories/update_category.php";

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../models/product_model.php';
 require_once __DIR__ . '/../../models/category_model.php';
 require_once __DIR__ . '/../../../helpers/image_helper.php';
+require_once __DIR__ . '/../../../helpers/message_helper.php';
 
 class ProductController
 {
@@ -41,11 +42,11 @@ class ProductController
 
             $addProduct = $this->model->addProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id);
             if ($addProduct) {
+                MessageHelper::success("Thêm sản phẩm thành công !!!");
                 header('Location: index.php?controller=product&action=listProduct');
                 exit;
             } else {
-                $error = "Thêm thất bại";
-                echo $error;
+                MessageHelper::error("Thêm sản phẩm thất bại !!!");
             }
         }
         $viewFile = "../../views/admins/products/add_product.php";
@@ -58,10 +59,11 @@ class ProductController
             $product_id = $_GET['product_id'];
             $deleteProduct = $this->model->deleteProduct($product_id);
             if ($deleteProduct) {
+                MessageHelper::success("Xóa sản phẩm thành công !!!");
                 header("Location: index.php?controller=product&action=listProduct");
                 exit;
             } else {
-                echo "Xóa thất bại";
+                MessageHelper::error("Xóa sản phẩm thất bại !!!");
             }
         } else {
             echo "<h2>Không có ID nào để xóa!!</h2>";
@@ -81,10 +83,11 @@ class ProductController
             $category_id = $_POST['category_id'];
             $updateProduct = $this->model->updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id);
             if ($updateProduct) {
+                MessageHelper::success("Cập nhật thành công !!!");
                 header("Location: index.php?controller=product&action=listProduct");
                 exit;
             } else {
-                echo "Cập nhật thất bại";
+                MessageHelper::error("Cập nhật sản phẩm thất bại !!!");
             }
         } else {
             echo "Không tìm thấy ID cập nhật";

@@ -24,6 +24,12 @@ switch ($controllerURL) {
     case 'category':
         $controllerPath = "../../controllers/admins/category_ctrl.php";
         break;
+    case 'accountAdmin':
+        $controllerPath = "../../controllers/admins/account_admin_ctrl.php";
+        break;
+    case 'accountCustomer':
+        $controllerPath = "../../controllers/admins/account_customer_ctrl.php";
+        break;
     default:
         break;
 }

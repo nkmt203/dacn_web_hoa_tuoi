@@ -9,8 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
     <!-- link css -->
     <link rel="stylesheet" href="../../../assets/css/admins/products/dashboard.css">
 </head>
@@ -23,7 +22,7 @@
             <h5 class="text-white fw-bold">ADMIN</h5>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link active" href="index.php?controller=dashboard">
+            <a class="nav-link" href="index.php?controller=dashboard">
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="nav-text">Trang chủ</span>
             </a>
@@ -47,10 +46,17 @@
                 <i class="fa-solid fa-comment"></i>
                 <span class="nav-text">Bình luận</span>
             </a>
-            <a class="nav-link" href="#">
-                <i class="fas fa-users"></i>
-                <span class="nav-text">Người dùng</span>
-            </a>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="this.parentElement.classList.toggle('open')">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">Tài khoản</span>
+                </a>
+                <div class="dropdown">
+                    <a class="nav-link" href="index.php?controller=accountAdmin&action=listAccountAdmin">Admin</a>
+                    <a class="nav-link" href="index.php?controller=accountCustomer&action=listAccountCustomer">Customer</a>
+                </div>
+            </li>
+
             <a class="nav-link" href="#">
                 <i class="fas fa-cog"></i>
                 <span class="nav-text">Cài đặt</span>

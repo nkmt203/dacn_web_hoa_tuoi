@@ -21,6 +21,10 @@
 <body class="p-1 m-1">
     <div class="container">
         <h2 class="mb-4 text-center fw-bold">Danh sách sản phẩm</h2>
+        <?php
+        require_once __DIR__ . '/../../../../helpers/message_helper.php';
+        MessageHelper::logMessage();
+        ?>
         <a href="index.php?controller=product&action=addProduct" class="btn btn-primary mb-3">+ Thêm mới sản phẩm</a>
         <table class="table table-hover table-bordered align-middle text-center">
             <thead class="table-secondary">

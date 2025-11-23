@@ -19,6 +19,10 @@ $listCategory = $category->getAllCategory();
 <body class="p-1 m-1">
     <div class="container">
         <h2 class="mb-4 text-center fw-bold">Danh sách danh mục</h2>
+        <?php
+        require_once __DIR__ . '/../../../../helpers/message_helper.php';
+        MessageHelper::logMessage();
+        ?>
         <a href="index.php?controller=category&action=addCategory" class="btn btn-primary mb-3">+ Thêm danh mục</a>
         <table class="table table-hover table-bordered align-middle text-center">
             <thead class="table-secondary">

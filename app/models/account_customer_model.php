@@ -22,4 +22,12 @@ class AccountCustomerModel
         $stmt->execute([$customer_id]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getByCustomerUsername($username)
+    {
+        $sql = "SELECT * FROM customers WHERE username=?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

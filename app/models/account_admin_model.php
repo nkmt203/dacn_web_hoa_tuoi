@@ -51,4 +51,12 @@ class AccountAdminModel
         $stmt->execute([$admin_id]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getByAdminUsername($username){
+        $pdo=pdo_connect();
+        $sql="SELECT *FROM admins WHERE username=?";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

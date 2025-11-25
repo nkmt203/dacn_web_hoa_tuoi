@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   
+
     <!-- link css -->
     <link rel="stylesheet" href="../../../assets/css/admins/products/dashboard.css">
 </head>
@@ -62,7 +62,7 @@
                 <span class="nav-text">Cài đặt</span>
             </a>
             <hr class="bg-light opacity-25">
-            <a class="nav-link text-danger" href="#">
+            <a class="nav-link text-danger" href="index.php?router=logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span class="nav-text">Đăng xuất</span>
             </a>
@@ -77,15 +77,23 @@
             <div class="ms-auto d-flex align-items-center">
                 <div class="dropdown">
                     <a class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <img src="https://via.placeholder.com/40" alt="Admin" class="rounded-circle me-2" width="40">
-                        <span class="d-none d-sm-inline fw-semibold">Admin User</span>
+                        <i class="fa-solid fa-circle-user" style="margin-right: 7px;"></i>
+                        <span class="d-none d-sm-inline fw-semibold">
+                            <?php
+                            if (isset($_SESSION['admin'])) {
+                                echo htmlspecialchars($_SESSION['admin']['username']);
+                            } else {
+                                echo "Admin";
+                            }
+                            ?>
+                        </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item text-danger" href="#">Đăng xuất</a></li>
+                        <li><a class="dropdown-item text-danger" href="index.php?controller=login&action=logout">Đăng xuất</a></li>
                     </ul>
                 </div>
             </div>

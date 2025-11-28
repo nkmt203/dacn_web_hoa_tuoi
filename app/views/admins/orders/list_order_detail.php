@@ -293,7 +293,7 @@
 
                             <!-- 4.Hủy đơn -->
                             <?php if (in_array($oneOrder['order_status'], ['pending', 'confirmed', 'shipping'])): ?>
-                                <a href="index.php?controller=order&action=cancel&order_id=<?= $oneOrder['order_id'] ?>"
+                                <a href="index.php?controller=order&action=cancelled&order_id=<?= $oneOrder['order_id'] ?>"
                                     class="btn btn-sm btn-danger mb-1"
                                     onclick="return confirm('Hủy đơn hàng này thật chứ?')">
                                     <i class="fas fa-times"></i> Hủy đơn
@@ -302,7 +302,7 @@
 
                             <!-- 5. Xóa -->
                             <?php if ($oneOrder['order_status'] === 'completed' || $oneOrder['order_status'] === 'cancelled'): ?>
-                                <a href="index.php?controller=order&action=delete&order_id=<?= $oneOrder['order_id'] ?>"
+                                <a href="index.php?controller=order&action=deleted&order_id=<?= $oneOrder['order_id'] ?>"
                                     class="btn btn-sm btn-outline-danger mb-1"
                                     onclick="return confirm('XÓA VĨNH VIỄN đơn hàng này khỏi hệ thống?\nKhông thể khôi phục!')">
                                     <i class="fas fa-trash"></i>

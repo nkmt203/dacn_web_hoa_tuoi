@@ -3,10 +3,7 @@
 
 use BcMath\Number;
 
-require_once __DIR__ . '/../../../models/order_model.php';
-require_once __DIR__ . '/../../../../config/config.php';
-$orderModel = new OrderModel();
-$listOrder = $orderModel->getAllOrder();
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -23,7 +20,17 @@ $listOrder = $orderModel->getAllOrder();
 
 <body class="p-1 m-1">
     <div class="container">
-        <h2 class="mb-4 text-center fw-bold">Danh sách đơn hàng</h2>
+        <?php
+        $statusText = match ($status) {
+            'pending' => 'Đơn hàng chờ xác nhận',
+            'confirmed' => 'Đơn hàng đã xác nhận',
+            'shipping' => 'Đơn hàng đang giao',
+            'completed' => 'Đơn hàng hoàn thành',
+            'cancelled' => 'Đơn hàng đã hủy',
+            default => 'Danh sách tất cả đơn hàng',
+        };
+        ?>
+        <h2 class="mb-4 text-center fw-bold"><?= $statusText ?></h2>
         <?php
         require_once __DIR__ . '/../../../../helpers/message_helper.php';
         MessageHelper::logMessage();
@@ -129,7 +136,7 @@ $listOrder = $orderModel->getAllOrder();
 
                             <!-- 4.Hủy đơn -->
                             <?php if (in_array($o['order_status'], ['pending', 'confirmed', 'shipping'])): ?>
-                                <a href="index.php?controller=order&action=cancel&order_id=<?= $o['order_id'] ?>"
+                                <a href="index.php?controller=order&action=cancelled&order_id=<?= $o['order_id'] ?>"
                                     class="btn btn-sm btn-danger mb-1"
                                     onclick="return confirm('Hủy đơn hàng này thật chứ?')">
                                     <i class="fas fa-times"></i> Hủy đơn
@@ -138,7 +145,7 @@ $listOrder = $orderModel->getAllOrder();
 
                             <!-- 5. Xóa -->
                             <?php if ($o['order_status'] === 'completed' || $o['order_status'] === 'cancelled'): ?>
-                                <a href="index.php?controller=order&action=delete&order_id=<?= $o['order_id'] ?>"
+                                <a href="index.php?controller=order&action=deleted&order_id=<?= $o['order_id'] ?>"
                                     class="btn btn-sm btn-outline-danger mb-1"
                                     onclick="return confirm('XÓA VĨNH VIỄN đơn hàng này khỏi hệ thống?\nKhông thể khôi phục!')">
                                     <i class="fas fa-trash"></i>

@@ -106,7 +106,7 @@ class ProductModel
                    p.stock_quantity, p.status, c.category_name, p.created_at,p.updated_at
             FROM products p 
             JOIN categories c ON p.category_id = c.category_id 
-            ORDER BY p.product_id DESC
+            ORDER BY p.product_id ASC
             LIMIT $limit OFFSET $offset";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();

@@ -30,6 +30,9 @@ switch ($controllerURL) {
     case 'accountCustomer':
         $controllerPath = "../../controllers/admins/account_customer_ctrl.php";
         break;
+    case 'order':
+        $controllerPath = "../../controllers/admins/order_ctrl.php";
+        break;
     default:
         break;
 }

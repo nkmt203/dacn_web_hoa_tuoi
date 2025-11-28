@@ -34,7 +34,7 @@
                 <i class="fa-solid fa-table-list"></i>
                 <span class="nav-text">Danh mục</span>
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="index.php?controller=order&action=listOrder">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="nav-text">Đơn hàng</span>
             </a>

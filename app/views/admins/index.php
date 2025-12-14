@@ -33,6 +33,9 @@ switch ($controllerURL) {
     case 'order':
         $controllerPath = "../../controllers/admins/order_ctrl.php";
         break;
+    case 'promotion':
+        $controllerPath = "../../controllers/admins/promotion_ctrl.php";
+        break;
     default:
         break;
 }

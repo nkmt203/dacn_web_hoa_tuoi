@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <!-- Sidebar -->
     <div class="sidebar" id="adminSidebar">
         <div class="text-center mb-4">
@@ -47,10 +46,22 @@
                 </div>
             </div>
 
-            <a class="nav-link" href="#">
-                <i class="fas fa-gift"></i>
-                <span class="nav-text">Khuyến mãi</span>
-            </a>
+            <!-- Khuyến mãi -->
+            <div class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#">
+                    <i class="fas fa-gift"></i>
+                    <span class="nav-text">Khuyến mãi</span>
+                </a>
+                <div class="dropdown">
+                    <a class="nav-link" href="index.php?controller=promotion&action=listAllProductPromotion">Tất cả SPKM</a>
+                    <a class="nav-link" href="index.php?controller=promotion&action=listPromotion">Code khuyến mãi</a>
+                    <a class="nav-link" href="index.php?controller=promotion&action=listApplyProductPromotion">Sản phẩm đang khuyến mãi</a>
+                    <a class="nav-link" href="index.php?controller=promotion&action=listExpiredProductPromotion">Sản phẩm khuyến mãi đã hết hạn</a>
+                    <a class="nav-link" href="index.php?controller=promotion&action=listInactiveProductPromotion">Sản phẩm khuyến mãi đã tạm ngưng</a>
+                    <a class="nav-link" href="index.php?controller=promotion&action=applyProductPromotion">Áp dụng khuyến mãi sản phẩm</a>
+                </div>
+            </div>
+
             <a class="nav-link" href="#">
                 <i class="fa-solid fa-comment"></i>
                 <span class="nav-text">Bình luận</span>
@@ -96,14 +107,16 @@
                             if (isset($_SESSION['admin'])) {
                                 echo htmlspecialchars($_SESSION['admin']['username']);
                             } else {
-                                echo "Admin";
+                                echo "Chưa đăng nhập";
                             }
                             ?>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="profile.php">Hồ sơ</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item text-danger" href="index.php?controller=login&action=logout">Đăng xuất</a></li>
                     </ul>
                 </div>
@@ -141,4 +154,5 @@
         });
     </script>
 </body>
+
 </html>

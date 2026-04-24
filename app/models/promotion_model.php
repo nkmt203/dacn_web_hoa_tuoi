@@ -163,6 +163,26 @@ class PromotionModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getProductPromotions($productIds = [])
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        $placeholders = str_repeat('?,', count($productIds) - 1) . '?';
+        $sql = "SELECT pp.product_id, pr.discount_value, pr.discount_type, pr.promotion_code, pr.end_date
+                FROM product_promotions pp
+                JOIN promotions pr ON pp.promotion_id = pr.promotion_id
+                WHERE pp.product_id IN ($placeholders) 
+                AND pr.status = 'active' 
+                AND pr.end_date >= CURDATE()
+                ORDER BY pr.discount_value DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($productIds);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // lấy sp mà phân trang 
     public function getPaginationAllApplyProductPromotion($limit, $offset)
     {

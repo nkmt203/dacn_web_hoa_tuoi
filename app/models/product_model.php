@@ -7,6 +7,131 @@ class ProductModel
         $this->pdo = pdo_connect();
     }
 
+    public function getAllProductForCustomer()
+    {
+        $pdo = pdo_connect();
+        $sql = "SELECT p.product_id, p.product_name, p.price, p.image_url, p.stock_quantity, p.status, c.category_name, c.category_id
+                FROM products p 
+                JOIN categories c ON p.category_id = c.category_id 
+                WHERE p.status = 'available'
+                ORDER BY p.product_id DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProductsForCustomerPagination($limit, $offset, $selectedCategories = [], $selectedPriceRange = null)
+    {
+        $pdo = pdo_connect();
+        $sql = "SELECT p.product_id, p.product_name, p.price, p.image_url, p.stock_quantity, p.status, c.category_name, c.category_id
+                FROM products p 
+                JOIN categories c ON p.category_id = c.category_id 
+                WHERE p.status = 'available'";
+
+        // Filter by categories
+        if (!empty($selectedCategories) && is_array($selectedCategories)) {
+            $placeholders = implode(',', array_fill(0, count($selectedCategories), '?'));
+            $sql .= " AND c.category_id IN ($placeholders)";
+        }
+
+        // Filter by price range
+        if ($selectedPriceRange && count($selectedPriceRange) == 2) {
+            $sql .= " AND p.price >= ? AND p.price <= ?";
+        }
+
+        $sql .= " ORDER BY p.product_id DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $pdo->prepare($sql);
+
+        // Bind category parameters
+        $paramIndex = 1;
+        if (!empty($selectedCategories) && is_array($selectedCategories)) {
+            foreach ($selectedCategories as $categoryId) {
+                $stmt->bindValue($paramIndex++, $categoryId, PDO::PARAM_INT);
+            }
+        }
+
+        // Bind price range parameters
+        if ($selectedPriceRange && count($selectedPriceRange) == 2) {
+            $stmt->bindValue($paramIndex++, (int)$selectedPriceRange[0], PDO::PARAM_INT);
+            $stmt->bindValue($paramIndex++, (int)$selectedPriceRange[1], PDO::PARAM_INT);
+        }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Add promotion data
+        if (!empty($products)) {
+            $productIds = array_column($products, 'product_id');
+            require_once __DIR__ . '/promotion_model.php';
+            $promotionModel = new PromotionModel();
+            $promotions = $promotionModel->getProductPromotions($productIds);
+
+            // Map promotions to products
+            $promotionMap = [];
+            foreach ($promotions as $promo) {
+                $promotionMap[$promo['product_id']] = $promo;
+            }
+
+            foreach ($products as &$product) {
+                if (isset($promotionMap[$product['product_id']])) {
+                    $promo = $promotionMap[$product['product_id']];
+                    $product['promotion'] = $promo;
+
+                    // Calculate discounted price
+                    if ($promo['discount_type'] === 'percentage') {
+                        $product['discounted_price'] = $product['price'] * (1 - $promo['discount_value'] / 100);
+                    } else {
+                        $product['discounted_price'] = $product['price'] - $promo['discount_value'];
+                    }
+                    $product['discounted_price'] = max(0, $product['discounted_price']);
+                }
+            }
+        }
+
+        return $products;
+    }
+
+    public function countProductsForCustomer($selectedCategories = [], $selectedPriceRange = null)
+    {
+        $pdo = pdo_connect();
+        $sql = "SELECT COUNT(*) FROM products p
+                JOIN categories c ON p.category_id = c.category_id
+                WHERE p.status = 'available'";
+
+        // Filter by categories
+        if (!empty($selectedCategories) && is_array($selectedCategories)) {
+            $placeholders = implode(',', array_fill(0, count($selectedCategories), '?'));
+            $sql .= " AND c.category_id IN ($placeholders)";
+        }
+
+        // Filter by price range
+        if ($selectedPriceRange && count($selectedPriceRange) == 2) {
+            $sql .= " AND p.price >= ? AND p.price <= ?";
+        }
+
+        $stmt = $pdo->prepare($sql);
+
+        // Bind category parameters
+        $paramIndex = 1;
+        if (!empty($selectedCategories) && is_array($selectedCategories)) {
+            foreach ($selectedCategories as $categoryId) {
+                $stmt->bindValue($paramIndex++, $categoryId, PDO::PARAM_INT);
+            }
+        }
+
+        // Bind price range parameters
+        if ($selectedPriceRange && count($selectedPriceRange) == 2) {
+            $stmt->bindValue($paramIndex++, (int)$selectedPriceRange[0], PDO::PARAM_INT);
+            $stmt->bindValue($paramIndex++, (int)$selectedPriceRange[1], PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
     public function getAllProduct()
     {
         $pdo = pdo_connect();

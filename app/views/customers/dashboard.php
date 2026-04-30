@@ -1,12 +1,30 @@
+<?php
+
+/** @var array $products */
+/** @var array $categories */
+/** @var array $categoryCounts */
+/** @var array $selectedCategories */
+/** @var array|null $selectedPriceRange */
+/** @var int $currentPage */
+/** @var int $totalPages */
+/** @var string $baseUrl */
+/** @var int|float $minPrice */
+/** @var int|float $maxPrice */
+
+$currentPage = $currentPage ?? 1;
+$totalPages  = $totalPages ?? 1;
+$baseUrl     = $baseUrl ?? '?';
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cửa Hàng Hoa Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>FlowerTown - Cửa hàng hoa tươi cao cấp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,150 +33,216 @@
         }
 
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #fefaf5;
+            color: #2d2a24;
+            line-height: 1.5;
         }
 
+        /* modern header - subtle glass */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 2px 12px rgba(0, 0, 0, 0.02);
+            padding: 0.9rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(130deg, #2b5e3b, #9b6b43);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
-        .search-box {
-            margin: 0 1rem;
+        .logo i {
+            background: none;
+            background-clip: unset;
+            color: #9b6b43;
+            margin-right: 6px;
         }
 
         .search-box input {
-            border-radius: 25px;
-            border: none;
-            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            border: 1px solid #f0e2d4;
+            background: #ffffff;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
-        .header-icons {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
+        .search-box input:focus {
+            border-color: #c7a17a;
+            box-shadow: 0 0 0 3px rgba(199, 161, 122, 0.2);
+            outline: none;
         }
 
         .header-icons a {
-            color: white;
+            color: #4a3b2c;
+            margin-left: 1rem;
+            font-size: 1.3rem;
+            transition: color 0.2s;
+            position: relative;
             text-decoration: none;
-            font-size: 1.2rem;
-            transition: transform 0.3s;
         }
 
         .header-icons a:hover {
-            transform: scale(1.2);
+            color: #c7a17a;
         }
 
         .cart-badge {
-            background-color: #e74c3c;
+            background: #c7a17a;
             color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.75rem;
+            border-radius: 30px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
             margin-left: -0.5rem;
+            font-weight: 500;
         }
 
-        .banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            margin-bottom: 2rem;
+        /* hero banner - soft minimal */
+        .hero {
+            background: #f6ede5;
+            padding: 3.5rem 0;
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 48px 48px;
         }
 
-        .banner h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #3a2c23;
         }
 
-        .banner p {
+        .hero p {
             font-size: 1.1rem;
+            color: #6b5a4c;
         }
 
-        .sidebar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        /* sidebar filter card */
+        .filter-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 1.6rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f5ede5;
             position: sticky;
-            top: 20px;
-            height: fit-content;
+            top: 100px;
         }
 
-        .sidebar h5 {
-            margin-bottom: 1rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .sidebar-item {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .sidebar-item:last-child {
-            border-bottom: none;
-        }
-
-        .products-section {
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .products-section .row {
+        .filter-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            align-items: center;
+            gap: 8px;
+            color: #2b5e3b;
         }
 
-        .products-section .col-md-6.col-lg-4 {
-            flex: 0 0 calc(33.333% - 1rem);
-            max-width: calc(33.333% - 1rem);
+        .filter-group h6 {
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
             margin-bottom: 1rem;
+            color: #3a2c23;
         }
 
-        @media (max-width: 992px) {
-            .products-section .col-md-6.col-lg-4 {
-                flex: 0 0 calc(50% - 1rem);
-                max-width: calc(50% - 1rem);
-            }
+        .filter-item {
+            margin-bottom: 0.7rem;
         }
 
-        @media (max-width: 576px) {
-            .products-section .col-md-6.col-lg-4 {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
+        .filter-item label {
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #4e4136;
+            transition: color 0.2s;
+        }
+
+        .filter-item label:hover {
+            color: #c7a17a;
+        }
+
+        .filter-item input {
+            margin-right: 10px;
+            accent-color: #c7a17a;
+            transform: scale(1.05);
+        }
+
+        .category-badge {
+            background: #f7f1eb;
+            border-radius: 40px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #8b765c;
+        }
+
+        hr {
+            opacity: 0.4;
+            margin: 1rem 0;
+        }
+
+        /* product grid */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.8rem;
+        }
+
+        .section-header h2 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2d2a24;
+            letter-spacing: -0.3px;
+        }
+
+        .result-count {
+            font-size: 0.85rem;
+            color: #9b8a7a;
+            background: #f3ede8;
+            padding: 0.3rem 0.9rem;
+            border-radius: 60px;
         }
 
         .product-card {
-            min-height: 450px;
-            background: white;
-            border-radius: 10px;
+            background: #ffffff;
+            border-radius: 28px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #f3e9e2;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 35px -12px rgba(0, 0, 0, 0.1);
+            border-color: #e9dbd0;
         }
 
         .product-img {
-            height: 220px;
-            object-fit: cover;
-            background: #f0f0f0;
             position: relative;
+            height: 230px;
+            background: #faf5f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
 
@@ -166,214 +250,294 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
         }
 
-        .product-link {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .product-link:hover .product-name {
-            color: #667eea;
+        .product-card:hover .product-img img {
+            transform: scale(1.03);
         }
 
         .product-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #e74c3c;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.85rem;
+            top: 14px;
+            right: 14px;
+            background: rgba(255, 255, 240, 0.9);
+            backdrop-filter: blur(4px);
+            color: #2b5e3b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
         }
 
         .product-body {
-            padding: 1.25rem;
-            flex-grow: 1;
+            padding: 1.2rem 1.2rem 1.4rem;
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
 
         .product-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #333;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #2d2a24;
+            margin-bottom: 0.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .product-category {
-            color: #999;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            color: #b6a088;
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .product-price {
-            color: #e74c3c;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.75rem;
+            margin-top: 0.4rem;
+            margin-bottom: 0.8rem;
         }
 
-        .product-content {
-            flex-grow: 1;
+        .current-price {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #3a6b47;
+        }
+
+        .old-price {
+            font-size: 0.85rem;
+            text-decoration: line-through;
+            color: #b6a088;
+            margin-left: 0.5rem;
+        }
+
+        .discount-badge {
+            background: #fae6e0;
+            color: #b45a3b;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 40px;
         }
 
         .product-stock {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
-            margin-top: auto;
+            font-size: 0.75rem;
+            margin: 0.5rem 0 0.9rem;
         }
 
         .stock-available {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
-        .stock-unavailable {
-            color: #e74c3c;
-            font-weight: bold;
+            color: #5b8c5a;
+            font-weight: 500;
         }
 
         .product-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 8px;
+            margin-top: auto;
         }
 
         .btn-add-cart {
             flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2b5e3b;
             border: none;
             color: white;
-            padding: 0.75rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: opacity 0.3s;
+            font-weight: 600;
+            padding: 0.7rem 0;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-add-cart:hover {
-            opacity: 0.9;
+            background: #1f452b;
+            transform: scale(0.98);
+        }
+
+        .btn-add-cart:disabled {
+            background: #cdc2b6;
+            cursor: not-allowed;
         }
 
         .btn-wishlist {
-            width: 45px;
-            background: #f0f0f0;
+            background: #fff1e8;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: #e74c3c;
-            font-size: 1.1rem;
+            width: 44px;
+            border-radius: 40px;
+            color: #b45a3b;
+            transition: all 0.2s;
         }
 
         .btn-wishlist:hover {
-            background: #e74c3c;
-            color: white;
+            background: #ffded0;
+            color: #a13e1c;
         }
 
-        footer {
-            background: #333;
-            color: white;
-            padding: 2rem 0;
+        /* pagination modern */
+        .pagination-modern {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             margin-top: 3rem;
+            margin-bottom: 2rem;
         }
 
-        .footer-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-section h6 {
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-
-        .footer-section a {
-            display: block;
-            color: #aaa;
+        .pagination-modern .page-link-custom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 42px;
+            border-radius: 30px;
+            background: white;
+            color: #4e4136;
+            font-weight: 500;
             text-decoration: none;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s;
+            transition: all 0.2s;
+            border: 1px solid #efe2d8;
         }
 
-        .footer-section a:hover {
+        .pagination-modern .page-link-custom:hover {
+            background: #f5ede5;
+            border-color: #dccbbc;
+            color: #2b5e3b;
+        }
+
+        .pagination-modern .active .page-link-custom {
+            background: #2b5e3b;
+            border-color: #2b5e3b;
             color: white;
         }
 
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #555;
-            color: #aaa;
+        .pagination-modern .disabled .page-link-custom {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
+        /* empty state */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 10px;
+            padding: 4rem 1rem;
+            background: #fefaf7;
+            border-radius: 48px;
         }
 
         .empty-state i {
-            font-size: 3rem;
-            color: #ddd;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            color: #dccbbc;
+        }
+
+        /* footer minimal */
+        .footer {
+            background: #f8f2ec;
+            padding: 2.5rem 0 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #eedfcb;
+        }
+
+        .footer a {
+            color: #7b6a5a;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .footer a:hover {
+            color: #2b5e3b;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .filter-card {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
+
+    <!-- header -->
     <header class="header">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <div class="logo"><i class="bi bi-flower1"></i> Cửa Hàng Hoa</div>
+            <div class="row align-items-center g-3">
+                <div class="col-md-3 col-6">
+                    <div class="logo"><i class="bi bi-flower2"></i> FlowerTown</div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-5 col-12 order-md-0 order-3">
                     <div class="search-box">
-                        <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm hoa, bó hoa, quà tặng...">
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="header-icons">
-                        <a href="#" title="Yêu thích"><i class="bi bi-heart"></i></a>
-                        <a href="#" title="Giỏ hàng"><i class="bi bi-cart"></i><span class="cart-badge">0</span></a>
-                        <a href="?router=login" title="Đăng nhập"><i class="bi bi-person-circle"></i></a>
+                <div class="col-md-4 col-6">
+                    <div class="header-icons d-flex justify-content-end align-items-center">
+                        <a href="#" class="d-none d-md-block"><i class="bi bi-heart"></i></a>
+                        <a href="#"><i class="bi bi-cart"></i><span class="cart-badge">0</span></a>
+                        <?php if (isset($_SESSION['customer'])): ?>
+                            <span class="text-dark me-2 d-none d-md-inline"><?php echo htmlspecialchars($_SESSION['customer']['username']); ?></span>
+                            <a href="../../../index.php?router=logout"><i class="bi bi-box-arrow-right"></i></a>
+                        <?php else: ?>
+                            <a href="?router=login"><i class="bi bi-person-circle"></i></a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="banner">
+    <!-- hero banner -->
+    <section class="hero">
         <div class="container">
-            <h1>Các Bông Hoa Tươi Đẹp Nhất</h1>
-            <p>Giao hàng miễn phí cho đơn hàng trên 100.000 VND</p>
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <h1>Hoa tươi từ vườn,<br>gửi yêu thương đến bạn</h1>
+                    <p class="mt-3">Những bó hoa đẹp nhất, thiết kế tinh tế và giao hàng nhanh chóng trong ngày.</p>
+                </div>
+                <div class="col-md-5 text-end d-none d-md-block">
+                    <i class="bi bi-flower1" style="font-size: 6rem; color: #e8cfb0;"></i>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
     <div class="container">
-        <div class="row">
-            <div class="col-lg-3 mb-4">
-                <div class="sidebar">
-                    <h5><i class="bi bi-funnel"></i> Bộ Lọc</h5>
-
+        <div class="row g-4">
+            <!-- filter sidebar -->
+            <div class="col-lg-3">
+                <div class="filter-card">
+                    <div class="filter-title">
+                        <i class="bi bi-sliders2"></i> Bộ lọc
+                    </div>
                     <form id="filterForm" method="GET" action="index.php">
                         <input type="hidden" name="router" value="customers">
                         <input type="hidden" name="controller" value="index">
                         <input type="hidden" name="action" value="index">
 
-                        <div class="sidebar-section mb-3">
-                            <h6 style="font-size: 1rem; margin-bottom: 1rem; color: #333;">Danh Mục</h6>
+                        <div class="filter-group">
+                            <h6>Danh mục</h6>
                             <?php if (!empty($categories)): ?>
                                 <?php foreach ($categories as $category): ?>
-                                    <div class="sidebar-item">
-                                        <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
+                                    <div class="filter-item">
+                                        <label>
                                             <span>
-                                                <input type="checkbox" name="categories[]" value="<?php echo $category['category_id']; ?>" class="me-2 filter-checkbox" <?php echo in_array($category['category_id'], $selectedCategories) ? 'checked' : ''; ?>>
+                                                <input type="checkbox" name="categories[]" value="<?php echo $category['category_id']; ?>" <?php echo in_array($category['category_id'], $selectedCategories) ? 'checked' : ''; ?>>
                                                 <?php echo htmlspecialchars($category['category_name']); ?>
                                             </span>
-                                            <span class="badge bg-light text-dark"><?php echo $categoryCounts[$category['category_id']] ?? 0; ?></span>
+                                            <span class="category-badge"><?php echo $categoryCounts[$category['category_id']] ?? 0; ?></span>
                                         </label>
                                     </div>
                                 <?php endforeach; ?>
@@ -382,214 +546,177 @@
 
                         <hr>
 
-                        <div class="sidebar-section mb-3">
-                            <h6 style="font-size: 1rem; margin-bottom: 1rem; color: #333;">Mức Giá</h6>
-                            <div class="sidebar-item">
-                                <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
-                                    <span>
-                                        <input type="radio" name="price_range" value="" class="me-2 filter-radio" <?php echo empty($_GET['price_range']) ? 'checked' : ''; ?>>
-                                        Tất cả
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="sidebar-item">
-                                <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
-                                    <span>
-                                        <input type="radio" name="price_range" value="0-50000" class="me-2 filter-radio" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 0 && $selectedPriceRange[1] == 50000 ? 'checked' : ''; ?>>
-                                        Dưới 50.000 VND
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="sidebar-item">
-                                <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
-                                    <span>
-                                        <input type="radio" name="price_range" value="50000-100000" class="me-2 filter-radio" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 50000 && $selectedPriceRange[1] == 100000 ? 'checked' : ''; ?>>
-                                        50.000 - 100.000 VND
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="sidebar-item">
-                                <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
-                                    <span>
-                                        <input type="radio" name="price_range" value="100000-200000" class="me-2 filter-radio" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 100000 && $selectedPriceRange[1] == 200000 ? 'checked' : ''; ?>>
-                                        100.000 - 200.000 VND
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="sidebar-item">
-                                <label class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
-                                    <span>
-                                        <input type="radio" name="price_range" value="200000-<?php echo $maxPrice + 1; ?>" class="me-2 filter-radio" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 200000 ? 'checked' : ''; ?>>
-                                        Trên 200.000 VND
-                                    </span>
-                                </label>
-                            </div>
+                        <div class="filter-group">
+                            <h6>Khoảng giá</h6>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="" <?php echo empty($_GET['price_range']) ? 'checked' : ''; ?>> Tất cả</label></div>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="0-50000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 0 && $selectedPriceRange[1] == 50000 ? 'checked' : ''; ?>> Dưới 50.000đ</label></div>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="50000-100000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 50000 && $selectedPriceRange[1] == 100000 ? 'checked' : ''; ?>> 50.000 - 100.000đ</label></div>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="100000-200000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 100000 && $selectedPriceRange[1] == 200000 ? 'checked' : ''; ?>> 100.000 - 200.000đ</label></div>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="200000-<?php echo $maxPrice + 1; ?>" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 200000 ? 'checked' : ''; ?>> Trên 200.000đ</label></div>
                         </div>
                     </form>
                 </div>
             </div>
 
+            <!-- product listing -->
             <div class="col-lg-9">
-                <div class="products-section">
-                    <h2 class="section-title">Sản Phẩm Nổi Bật</h2>
-                    <div class="row">
-                        <?php if (!empty($products)): ?>
-                            <?php foreach ($products as $product): ?>
-                                <?php $detailUrl = 'index.php?router=customers&controller=detail&action=index&id=' . $product['product_id']; ?>
-                                <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="product-card" data-category-id="<?php echo $product['category_id']; ?>" data-price="<?php echo isset($product['discounted_price']) ? $product['discounted_price'] : $product['price']; ?>">
-                                        <div class="product-img">
-                                            <a class="product-link" href="<?php echo $detailUrl; ?>">
-                                                <img src="uploads/<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['product_name']); ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width: 100%; height: 200px; object-fit: cover;">
-                                                <div style="display: none; width: 100%; height: 200px; background: #f8f9fa; border: 1px solid #dee2e6; align-items: center; justify-content: center; color: #6c757d; font-size: 14px;">No Image</div>
-                                            </a>
-                                            <?php if ($product['stock_quantity'] > 0): ?>
-                                                <span class="product-badge">Còn Hàng</span>
+                <div class="section-header">
+                    <h2>🌸 Hoa tươi nổi bật</h2>
+                    <div class="result-count"><?php echo count($products); ?> sản phẩm</div>
+                </div>
+
+                <div class="row g-4">
+                    <?php if (!empty($products)): ?>
+                        <?php foreach ($products as $product): ?>
+                            <?php $detailUrl = 'index.php?router=customers&controller=detail&action=index&id=' . $product['product_id']; ?>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="product-card">
+                                    <div class="product-img">
+                                        <a href="<?php echo $detailUrl; ?>">
+                                            <img src="uploads/<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['product_name']); ?>" onerror="this.src='https://placehold.co/400x300?text=Flower+Image'">
+                                        </a>
+                                        <?php if ($product['stock_quantity'] > 0): ?>
+                                            <div class="product-badge">Còn hàng</div>
+                                        <?php else: ?>
+                                            <div class="product-badge" style="background:#e3cfc0; color:#885e46;">Hết hàng</div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="product-body">
+                                        <a href="<?php echo $detailUrl; ?>" class="text-decoration-none">
+                                            <div class="product-name"><?php echo htmlspecialchars($product['product_name']); ?></div>
+                                        </a>
+                                        <div class="product-category"><?php echo htmlspecialchars($product['category_name']); ?></div>
+                                        <div class="product-price">
+                                            <?php if (isset($product['discounted_price'])): ?>
+                                                <span class="current-price"><?php echo number_format($product['discounted_price'], 0, ',', '.'); ?>đ</span>
+                                                <span class="old-price"><?php echo number_format($product['price'], 0, ',', '.'); ?>đ</span>
+                                                <span class="discount-badge">
+                                                    <?php echo $product['promotion']['discount_type'] === 'percentage' ? '-' . $product['promotion']['discount_value'] . '%' : '-' . number_format($product['promotion']['discount_value'], 0, ',', '.') . 'đ'; ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="current-price"><?php echo number_format($product['price'], 0, ',', '.'); ?>đ</span>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="product-body">
-                                            <div class="product-content">
-                                                <a class="product-link" href="<?php echo $detailUrl; ?>">
-                                                    <div class="product-name"><?php echo htmlspecialchars($product['product_name']); ?></div>
-                                                </a>
-                                                <div class="product-category"><?php echo htmlspecialchars($product['category_name']); ?></div>
-                                                <div class="product-price">
-                                                    <?php if (isset($product['discounted_price'])): ?>
-                                                        <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;"><?php echo number_format($product['price'], 0, ',', '.'); ?> VND</span><br>
-                                                        <span style="color: #e74c3c; font-weight: bold;"><?php echo number_format($product['discounted_price'], 0, ',', '.'); ?> VND</span>
-                                                        <span class="badge bg-danger ms-1"><?php echo $product['promotion']['discount_type'] === 'percentage' ? '-' . $product['promotion']['discount_value'] . '%' : '-' . number_format($product['promotion']['discount_value'], 0, ',', '.') . ' VND'; ?></span>
-                                                    <?php else: ?>
-                                                        <?php echo number_format($product['price'], 0, ',', '.'); ?> VND
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                            <div class="product-stock">
-                                                <?php if ($product['stock_quantity'] > 0): ?>
-                                                    <span class="stock-available">Còn <?php echo $product['stock_quantity']; ?> sản phẩm</span>
-                                                <?php else: ?>
-                                                    <span class="stock-unavailable">Hết hàng</span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="product-actions">
-                                                <button class="btn-add-cart" <?php echo $product['stock_quantity'] > 0 ? '' : 'disabled'; ?>>
-                                                    <i class="bi bi-cart-plus"></i> Thêm Giỏ
-                                                </button>
-                                                <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
-                                            </div>
+                                        <div class="product-stock">
+                                            <?php if ($product['stock_quantity'] > 0): ?>
+                                                <span class="stock-available"><i class="bi bi-check-circle-fill"></i> Còn <?php echo $product['stock_quantity']; ?> sp</span>
+                                            <?php else: ?>
+                                                <span class="stock-unavailable" style="color:#c08267;">Tạm hết</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="product-actions">
+                                            <button class="btn-add-cart" <?php echo $product['stock_quantity'] > 0 ? '' : 'disabled'; ?>>
+                                                <i class="bi bi-bag-plus"></i> Thêm giỏ
+                                            </button>
+                                            <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="col-12">
-                                <div class="empty-state">
-                                    <i class="bi bi-inbox"></i>
-                                    <h4>Không có sản phẩm nào</h4>
-                                    <p>Hiện tại không có sản phẩm phù hợp với lựa chọn của bạn</p>
-                                </div>
                             </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <?php if ($totalPages > 1):
-                        $queryParams = $_GET;
-                        unset($queryParams['page']);
-                        $baseUrl = 'index.php';
-                        if (!empty($queryParams)) {
-                            $baseUrl .= '?' . http_build_query($queryParams) . '&';
-                        } else {
-                            $baseUrl .= '?';
-                        }
-                    ?>
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-                                <?php if ($currentPage > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?php echo $baseUrl; ?>page=1">Đầu</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?php echo $baseUrl; ?>page=<?php echo $currentPage - 1; ?>">Trước</a>
-                                    </li>
-                                <?php endif; ?>
-
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <?php if ($i >= $currentPage - 2 && $i <= $currentPage + 2): ?>
-                                        <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
-                                            <a class="page-link" href="<?php echo $baseUrl; ?>page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
-
-                                <?php if ($currentPage < $totalPages): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?php echo $baseUrl; ?>page=<?php echo $currentPage + 1; ?>">Sau</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?php echo $baseUrl; ?>page=<?php echo $totalPages; ?>">Cuối</a>
-                                    </li>
-                                <?php endif; ?>
-                            </ul>
-                        </nav>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="bi bi-flower2"></i>
+                                <h5 class="mt-3">Chưa có sản phẩm nào</h5>
+                                <p>Hãy thử chọn bộ lọc khác nhé</p>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
+
+                <!-- pagination -->
+                <?php if ($totalPages > 1):
+                    $queryParams = $_GET;
+                    unset($queryParams['page']);
+                    $baseQuery = http_build_query($queryParams);
+                    $baseUrl = 'index.php' . ($baseQuery ? '?' . $baseQuery . '&' : '?');
+                    $start = max(1, $currentPage - 2);
+                    $end = min($totalPages, $currentPage + 2);
+                    if ($currentPage <= 3) {
+                        $start = 1;
+                        $end = min($totalPages, 5);
+                    }
+                    if ($currentPage >= $totalPages - 2) {
+                        $end = $totalPages;
+                        $start = max(1, $totalPages - 4);
+                    }
+                ?>
+                    <div class="pagination-modern">
+                        <div class="<?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link-custom" href="<?= $currentPage > 1 ? $baseUrl . 'page=' . ($currentPage - 1) : '#' ?>"><i class="bi bi-chevron-left"></i></a>
+                        </div>
+                        <?php if ($start > 1): ?>
+                            <div class="disabled"><span class="page-link-custom">...</span></div>
+                        <?php endif; ?>
+                        <?php for ($i = $start; $i <= $end; $i++): ?>
+                            <div class="<?= $i == $currentPage ? 'active' : '' ?>">
+                                <a class="page-link-custom" href="<?= $baseUrl ?>page=<?= $i ?>"><?= $i ?></a>
+                            </div>
+                        <?php endfor; ?>
+                        <?php if ($end < $totalPages): ?>
+                            <div class="disabled"><span class="page-link-custom">...</span></div>
+                        <?php endif; ?>
+                        <div class="<?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                            <a class="page-link-custom" href="<?= $currentPage < $totalPages ? $baseUrl . 'page=' . ($currentPage + 1) : '#' ?>"><i class="bi bi-chevron-right"></i></a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <footer>
+    <footer class="footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-3 footer-section">
-                    <h6><i class="bi bi-flower1"></i> Cửa Hàng Hoa</h6>
-                    <p>Chúng tôi cung cấp các loại hoa tươi đẹp nhất, được chọn lọc kỹ lưỡng từ những vườn hoa uy tín.</p>
+            <div class="row gy-4">
+                <div class="col-md-3">
+                    <div class="logo mb-2" style="font-size: 1.3rem"><i class="bi bi-flower2"></i> FlowerTown</div>
+                    <p class="text-muted small">Mang hơi thở thiên nhiên vào không gian sống của bạn.</p>
                 </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Hỗ Trợ Khách Hàng</h6>
-                    <a href="#"><i class="bi bi-question-circle"></i> Câu Hỏi Thường Gặp</a>
-                    <a href="#"><i class="bi bi-telephone"></i> Liên Hệ Chúng Tôi</a>
-                    <a href="#"><i class="bi bi-info-circle"></i> Về Chúng Tôi</a>
-                    <a href="#"><i class="bi bi-file-text"></i> Chính Sách Bảo Mật</a>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold">Hỗ trợ</h6>
+                    <div class="d-flex flex-column gap-2 mt-2">
+                        <a href="#"><i class="bi bi-question-circle me-1"></i> FAQ</a>
+                        <a href="#"><i class="bi bi-headset"></i> Liên hệ</a>
+                        <a href="#">Chính sách đổi trả</a>
+                    </div>
                 </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Chính Sách</h6>
-                    <a href="#"><i class="bi bi-truck"></i> Chính Sách Giao Hàng</a>
-                    <a href="#"><i class="bi bi-arrow-counterclockwise"></i> Chính Sách Đổi Trả</a>
-                    <a href="#"><i class="bi bi-credit-card"></i> Phương Thức Thanh Toán</a>
-                    <a href="#"><i class="bi bi-shield-check"></i> Bảo Hành Chất Lượng</a>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold">Về chúng tôi</h6>
+                    <div class="d-flex flex-column gap-2 mt-2">
+                        <a href="#">Câu chuyện thương hiệu</a>
+                        <a href="#">Hệ thống cửa hàng</a>
+                        <a href="#">Tuyển dụng</a>
+                    </div>
                 </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Kết Nối Với Chúng Tôi</h6>
-                    <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
-                    <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
-                    <a href="#"><i class="bi bi-twitter"></i> Twitter</a>
-                    <a href="#"><i class="bi bi-youtube"></i> YouTube</a>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold">Kết nối</h6>
+                    <div class="d-flex gap-3 mt-2">
+                        <a href="#"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#"><i class="bi bi-pinterest fs-5"></i></a>
+                    </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Cửa Hàng Hoa Online. Tất cả các quyền được bảo lưu.</p>
-            </div>
+            <hr class="mt-4 opacity-25">
+            <div class="text-center small text-muted">© 2025 FlowerTown - Yêu thương gửi qua từng cánh hoa</div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterForm = document.getElementById('filterForm');
-            const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
-            const filterRadios = document.querySelectorAll('.filter-radio');
-
-            function submitForm() {
-                const pageInput = filterForm.querySelector('input[name="page"]');
-                if (pageInput) {
-                    pageInput.remove();
-                }
-                filterForm.submit();
-            }
-
-            filterCheckboxes.forEach(cb => cb.addEventListener('change', submitForm));
-            filterRadios.forEach(rb => rb.addEventListener('change', submitForm));
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('filterForm');
+            const checkboxes = document.querySelectorAll('.filter-item input[type="checkbox"]');
+            const radios = document.querySelectorAll('.filter-item input[type="radio"]');
+            const submit = () => {
+                const pageInput = form.querySelector('input[name="page"]');
+                if (pageInput) pageInput.remove();
+                form.submit();
+            };
+            checkboxes.forEach(cb => cb.addEventListener('change', submit));
+            radios.forEach(rb => rb.addEventListener('change', submit));
         });
     </script>
 </body>
-
 </html>

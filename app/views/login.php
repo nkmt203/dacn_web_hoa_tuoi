@@ -4,168 +4,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Đăng nhập hệ thống</title>
+    <title>Đăng nhập - Bloom & Blossom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        :root {
+            --floral-gold: #d4a373;
+            --floral-dark: #1d2d22;
+            --floral-bg: #f8f9fa;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Jost', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url('https://images.unsplash.com/photo-1490750967868-58a4b9b7e902?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            margin: 0;
+            padding: 20px;
         }
 
-        .login-container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 2rem;
+        /* Card Form nằm giữa */
+        .login-card {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 3.5rem 3rem 3rem 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative; /* Quan trọng để đặt nút quay lại bên trong */
+            animation: slideUp 0.6s ease-out;
         }
 
-        .card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card-header {
-            background: linear-gradient(45deg, #4e54c8, #8f94fb);
-            color: white;
+        /* Nút quay lại nằm GỐC TRÊN BÊN TRÁI FORM */
+        .btn-back-inner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #888;
+            text-decoration: none;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .btn-back-inner:hover {
+            background: #f0f0f0;
+            color: var(--floral-gold);
+            transform: scale(1.1);
+        }
+
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.3rem;
+            color: var(--floral-dark);
             text-align: center;
-            padding: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tabs Modern */
+        .nav-tabs {
+            border: none;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 14px;
+            margin-bottom: 2rem;
         }
 
         .nav-tabs .nav-link {
-            border-radius: 0.5rem 0.5rem 0 0;
+            border: none !important;
+            border-radius: 10px !important;
+            color: #777;
             font-weight: 600;
+            padding: 10px;
+            transition: 0.3s;
         }
 
         .nav-tabs .nav-link.active {
-            background-color: #fff;
-            color: #4e54c8;
-            border-bottom: none;
+            background: white !important;
+            color: var(--floral-gold) !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .btn-login {
-            background: linear-gradient(45deg, #4e54c8, #8f94fb);
+        /* Form Controls */
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .input-group {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+            background: #fcfcfc;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group:focus-within {
+            border-color: var(--floral-gold);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+        }
+
+        .input-group-text {
+            background: transparent;
             border: none;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
+            color: var(--floral-gold);
+            padding-left: 15px;
+        }
+
+        .form-control {
+            border: none;
+            padding: 0.8rem 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus { box-shadow: none; }
+
+        /* Button Đăng nhập */
+        .btn-login {
+            background: var(--floral-dark);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 0.5rem;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .btn-login:hover {
+            background: var(--floral-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 163, 115, 0.2);
+        }
+
+        .register-link {
+            color: var(--floral-gold);
+            text-decoration: none;
             font-weight: 600;
         }
 
-        .btn-admin {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-        }
-
-        .btn-login:hover,
-        .btn-admin:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
+        .register-link:hover { text-decoration: underline; }
     </style>
 </head>
 
 <body>
 
-    <div class="login-container">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Đăng Nhập Hệ Thống</h3>
-                <?php
-                require_once __DIR__ . '/../../helpers/message_helper.php';
-                MessageHelper::logMessage();
-                ?>
+    <div class="login-card">
+        <a href="index.php" class="btn-back-inner" title="Quay lại trang chủ">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+
+        <div class="text-center mb-4">
+            <h2 class="brand-title">Bloom & Blossom</h2>
+            <p class="text-muted small">Hương sắc cho cuộc sống thêm ngọt ngào</p>
+            <?php
+            require_once __DIR__ . '/../../helpers/message_helper.php';
+            MessageHelper::logMessage();
+            ?>
+        </div>
+
+        <ul class="nav nav-tabs nav-fill" id="loginTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer">
+                    Khách hàng
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin">
+                    Quản trị
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="customer">
+                <form action="" method="POST">
+                    <input type="hidden" name="role" value="customer">
+                    
+                    <div class="mb-2">
+                        <label class="form-label">Tên tài khoản</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" name="username" placeholder="Tên đăng nhập" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" name="password" id="custPass" placeholder="••••••••" required>
+                            <button class="btn btn-link text-muted pe-3" type="button" onclick="togglePass('custPass', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label small text-muted" for="remember">Ghi nhớ</label>
+                        </div>
+                        <a href="forgot_password.php" class="small text-muted text-decoration-none">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" name="btnLoginCustomer" class="btn btn-login">ĐĂNG NHẬP</button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="small text-muted mb-0">Chưa có tài khoản? 
+                        <a href="register.php" class="register-link">Đăng ký ngay</a>
+                    </p>
+                </div>
             </div>
 
-            <div class="card-body p-4">
-                <!-- Tabs chọn loại tài khoản -->
-                <ul class="nav nav-tabs mb-4" id="loginTab" role="tablist">
-                    <li class="nav-item flex-fill">
-                        <button class="nav-link active w-100" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer">
-                            <i class="bi bi-person-circle"></i> Customer
-                        </button>
-                    </li>
-                    <li class="nav-item flex-fill">
-                        <button class="nav-link w-100" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin">
-                            <i class="bi bi-person-fill-gear"></i> Admin
-                        </button>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <!-- ==================== CUSTOMER ==================== -->
-                    <div class="tab-pane fade show active" id="customer">
-                        <form action="" method="POST">
-                            <input type="hidden" name="role" value="customer">
-                            <div class="mb-3">
-                                <label class="form-label">Tên đăng nhập</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                    <input type="text" class="form-control" name="username" placeholder="Nhập tên đăng nhập" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input type="password" class="form-control" name="password" id="custPass" placeholder="Nhập mật khẩu" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePass('custPass', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember">
-                                    <label class="form-check-label" for="remember">Nhớ mật khẩu</label>
-                                </div>
-                                <a href="forgot_password.php" class="small text-decoration-none">Quên mật khẩu?</a>
-                            </div>
-
-                            <button type="submit" name="btnLoginCustomer" class="btn btn-primary btn-login w-100 text-white">
-                                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập Customer
-                            </button>
-                        </form>
-
-                        <hr class="my-4">
-                        <p class="text-center mb-0">
-                            Chưa có tài khoản?
-                            <a href="register.php" class="fw-bold text-decoration-none">Đăng ký ngay</a>
-                        </p>
+            <div class="tab-pane fade" id="admin">
+                <form action="" method="POST">
+                    <input type="hidden" name="role" value="admin">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Mã nhân viên</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                            <input type="text" class="form-control" name="username" placeholder="Admin ID" required>
+                        </div>
                     </div>
 
-                    <!-- ==================== ADMIN (chỉ đăng nhập) ==================== -->
-                    <div class="tab-pane fade" id="admin">
-                        <form action="" method="POST">
-                            <input type="hidden" name="role" value="admin">
-
-                            <div class="mb-3">
-                                <label class="form-label">Tên đăng nhập Admin</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                    <input type="text" class="form-control" name="username" placeholder="Nhập tên đăng nhập" required autofocus>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
-                                    <input type="password" class="form-control" name="password" id="adminPass" placeholder="Nhập mật khẩu" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePass('adminPass', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Nút đăng nhập Admin (màu đỏ để phân biệt) -->
-                            <button type="submit" name="btnLoginAdmin" class="btn btn-danger btn-admin btn-login w-100 text-white">
-                                <i class="bi bi-shield-check"></i> Đăng nhập Admin
+                    <div class="mb-4">
+                        <label class="form-label">Mật khẩu hệ thống</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input type="password" class="form-control" name="password" id="adminPass" placeholder="••••••••" required>
+                            <button class="btn btn-link text-muted pe-3" type="button" onclick="togglePass('adminPass', this)">
+                                <i class="bi bi-eye"></i>
                             </button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+
+                    <button type="submit" name="btnLoginAdmin" class="btn btn-login">XÁC THỰC ADMIN</button>
+                </form>
             </div>
         </div>
     </div>

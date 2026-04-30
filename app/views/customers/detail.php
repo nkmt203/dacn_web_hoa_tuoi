@@ -1,423 +1,244 @@
+<?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo htmlspecialchars($product['product_name']); ?> - Cửa Hàng Hoa Online</title>
+    <title><?= htmlspecialchars($product['product_name']) ?> - Bloom & Co</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap');
 
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background: #fdfaf7;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .heading-font {
+            font-family: 'Playfair Display', serif;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .search-box {
-            margin: 0 1rem;
-        }
-
-        .search-box input {
-            border-radius: 25px;
-            border: none;
-            padding: 0.5rem 1rem;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .header-icons a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2rem;
-            transition: transform 0.3s;
-        }
-
-        .header-icons a:hover {
-            transform: scale(1.2);
-        }
-
-        .breadcrumb {
-            background: transparent;
-            margin-bottom: 2rem;
-        }
-
-        .breadcrumb a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .product-image {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
+        .main-container {
+            max-width: 1100px;
         }
 
         .product-image img {
-            max-width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
+            border-radius: 20px;
+            transition: transform 0.5s ease;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.03);
         }
 
         .product-info {
             background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
             padding: 2rem;
-            border-radius: 10px;
         }
 
         .product-title {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #333;
+            font-size: 2.1rem;
+            line-height: 1.2;
         }
 
-        .product-category {
-            color: #999;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .product-rating {
-            color: #f39c12;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .price-section {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-
-        .product-price {
-            font-size: 2rem;
-            color: #e74c3c;
-            font-weight: bold;
+        .price {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #e05a7e;
         }
 
         .original-price {
+            font-size: 1.25rem;
             text-decoration: line-through;
             color: #999;
-            font-size: 1rem;
-        }
-
-        .discount-badge {
-            background: #e74c3c;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            display: inline-block;
-            margin-left: 1rem;
-        }
-
-        .stock-info {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-        }
-
-        .stock-available {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
-        .stock-unavailable {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .quantity-section {
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .quantity-input {
-            width: 80px;
-            text-align: center;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
         }
 
         .btn-add-cart {
-            flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e05a7e, #c4456c);
             border: none;
-            color: white;
-            padding: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: opacity 0.3s;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 50px;
         }
 
         .btn-add-cart:hover {
-            opacity: 0.9;
+            background: linear-gradient(135deg, #c4456c, #e05a7e);
+            transform: translateY(-2px);
         }
 
         .btn-wishlist {
-            width: 50px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: #e74c3c;
-            font-size: 1.2rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            font-size: 1.3rem;
         }
 
-        .btn-back {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 1rem;
+        .trust-item {
+            font-size: 0.95rem;
         }
 
-        .btn-back:hover {
-            background: #5a6268;
-            color: white;
-        }
-
-        .description-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-        }
-
-        .description-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .description-text {
-            color: #666;
-            line-height: 1.8;
-        }
-
-        footer {
-            background: #333;
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-
-        .footer-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-section h6 {
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-
-        .footer-section a {
-            display: block;
-            color: #aaa;
-            text-decoration: none;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s;
-        }
-
-        .footer-section a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #555;
-            color: #aaa;
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 600;
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
+
+    <!-- Header đơn giản & gọn -->
+    <header class="bg-white border-bottom sticky-top">
+        <div class="container py-3">
             <div class="row align-items-center">
                 <div class="col-md-3">
-                    <div class="logo"><i class="bi bi-flower1"></i> Cửa Hàng Hoa</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-flower1 fs-2 text-pink-400"></i>
+                        <span class="heading-font fs-4 fw-bold">Bloom & Co</span>
+                    </div>
                 </div>
                 <div class="col-md-5">
-                    <div class="search-box">
-                        <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm...">
-                    </div>
+                    <input type="text" class="form-control rounded-pill" placeholder="Tìm kiếm hoa tươi...">
                 </div>
-                <div class="col-md-4">
-                    <div class="header-icons">
-                        <a href="#" title="Yêu thích"><i class="bi bi-heart"></i></a>
-                        <a href="#" title="Giỏ hàng"><i class="bi bi-cart"></i></a>
-                        <a href="?router=login" title="Đăng nhập"><i class="bi bi-person-circle"></i></a>
-                    </div>
+                <div class="col-md-4 text-end">
+                    <a href="#" class="me-4 text-dark fs-4"><i class="bi bi-heart"></i></a>
+                    <a href="#" class="me-4 text-dark fs-4 position-relative">
+                        <i class="bi bi-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill">2</span>
+                    </a>
+                    <?php if (isset($_SESSION['customer'])): ?>
+                        <span class="me-2">Xin chào, <?= htmlspecialchars($_SESSION['customer']['username']) ?></span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container">
-        <a href="index.php?router=customers&controller=index&action=index" class="btn-back"><i class="bi bi-arrow-left"></i> Quay Lại</a>
-
-        <nav class="breadcrumb">
-            <a href="index.php?router=customers&controller=index&action=index">Trang Chủ</a> /
-            <span><?php echo htmlspecialchars($product['product_name']); ?></span>
+    <div class="container main-container py-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.php?router=customers&controller=index&action=index" class="text-decoration-none">Trang chủ</a></li>
+                <li class="breadcrumb-item active"><?= htmlspecialchars($product['product_name']) ?></li>
+            </ol>
         </nav>
 
-        <div class="row">
-            <div class="col-md-5">
+        <div class="row g-5">
+            <!-- Ảnh sản phẩm -->
+            <div class="col-lg-6">
                 <div class="product-image">
-                    <img src="uploads/<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['product_name']); ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width: 100%; max-height: 400px; object-fit: cover;">
-                    <div style="display: none; width: 100%; height: 400px; background: #f8f9fa; border: 1px solid #dee2e6; align-items: center; justify-content: center; color: #6c757d; font-size: 18px;">No Image Available</div>
+                    <img src="uploads/<?= htmlspecialchars($product['image_url']) ?>"
+                        class="img-fluid w-100 shadow-sm"
+                        alt="<?= htmlspecialchars($product['product_name']) ?>"
+                        onerror="this.src='https://placehold.co/600x600/pink/white?text=No+Image';">
                 </div>
             </div>
 
-            <div class="col-md-7">
+            <!-- Thông tin -->
+            <div class="col-lg-6">
                 <div class="product-info">
-                    <h1 class="product-title"><?php echo htmlspecialchars($product['product_name']); ?></h1>
+                    <h1 class="product-title heading-font fw-semibold mb-2">
+                        <?= htmlspecialchars($product['product_name']) ?>
+                    </h1>
+                    <p class="text-muted"><?= htmlspecialchars($category['category_name']) ?></p>
 
-                    <div class="product-category">
-                        <strong>Danh Mục:</strong> <?php echo htmlspecialchars($category['category_name']); ?>
+                    <!-- Rating -->
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="text-warning fs-5">★★★★☆</span>
+                        <small class="text-muted">(128 đánh giá)</small>
                     </div>
 
-                    <div class="product-rating">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
-                        <span style="color: #666;">(45 đánh giá)</span>
-                    </div>
-
-                    <div class="price-section">
+                    <!-- Giá -->
+                    <div class="mb-4">
                         <?php if (isset($product['discounted_price'])): ?>
-                            <div class="product-price">
-                                <?php echo number_format($product['discounted_price'], 0, ',', '.'); ?> VND
-                            </div>
-                            <div class="original-price">
-                                <?php echo number_format($product['price'], 0, ',', '.'); ?> VND
-                            </div>
-                            <span class="discount-badge">
-                                <?php echo $product['promotion']['discount_type'] === 'percentage' ? '-' . $product['promotion']['discount_value'] . '%' : '-' . number_format($product['promotion']['discount_value'], 0, ',', '.') . ' VND'; ?>
-                            </span>
+                            <span class="price"><?= number_format($product['discounted_price'], 0, ',', '.') ?>đ</span>
+                            <span class="original-price ms-3"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
                         <?php else: ?>
-                            <div class="product-price">
-                                <?php echo number_format($product['price'], 0, ',', '.'); ?> VND
-                            </div>
+                            <span class="price"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
                         <?php endif; ?>
                     </div>
 
-                    <div class="stock-info">
+                    <!-- Kho hàng -->
+                    <div class="mb-4">
                         <?php if ($product['stock_quantity'] > 0): ?>
-                            <span class="stock-available">
-                                <i class="bi bi-check-circle-fill"></i> Còn <?php echo $product['stock_quantity']; ?> sản phẩm
+                            <span class="text-success fw-medium">
+                                <i class="bi bi-check-circle-fill"></i> Còn <?= $product['stock_quantity'] ?> sản phẩm
                             </span>
                         <?php else: ?>
-                            <span class="stock-unavailable">
-                                <i class="bi bi-x-circle-fill"></i> Hết hàng
-                            </span>
+                            <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Hết hàng</span>
                         <?php endif; ?>
                     </div>
 
-                    <div class="quantity-section">
-                        <label for="quantity"><strong>Số Lượng:</strong></label>
-                        <input type="number" id="quantity" class="form-control quantity-input" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>">
+                    <!-- Số lượng -->
+                    <div class="mb-4">
+                        <label class="form-label fw-medium">Số lượng</label>
+                        <div class="input-group" style="width: 160px;">
+                            <button class="btn btn-outline-secondary" onclick="changeQty(-1)">−</button>
+                            <input type="number" id="quantity" class="form-control text-center" value="1" min="1"
+                                max="<?= $product['stock_quantity'] ?>">
+                            <button class="btn btn-outline-secondary" onclick="changeQty(1)">+</button>
+                        </div>
                     </div>
 
-                    <div class="action-buttons">
-                        <button class="btn-add-cart" <?php echo $product['stock_quantity'] > 0 ? '' : 'disabled'; ?>>
-                            <i class="bi bi-cart-plus"></i> Thêm Vào Giỏ Hàng
+                    <!-- Nút mua -->
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-add-cart text-white flex-grow-1"
+                            <?= $product['stock_quantity'] <= 0 ? 'disabled' : '' ?>>
+                            <i class="bi bi-cart-plus me-2"></i> Thêm vào giỏ hàng
                         </button>
-                        <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
+                        <button class="btn btn-wishlist d-flex align-items-center justify-content-center">
+                            <i class="bi bi-heart text-danger"></i>
+                        </button>
                     </div>
 
-                    <div style="background: #f0f0f0; padding: 1rem; border-radius: 5px; color: #666; font-size: 0.9rem;">
-                        <p><i class="bi bi-truck"></i> <strong>Giao hàng miễn phí</strong> cho đơn hàng trên 100.000 VND</p>
-                        <p><i class="bi bi-shield-check"></i> <strong>Bảo hành chất lượng</strong> 100% hoặc hoàn tiền</p>
-                        <p><i class="bi bi-clock"></i> <strong>Giao hàng nhanh</strong> trong vòng 1-2 ngày</p>
+                    <!-- Trust -->
+                    <div class="row mt-5 g-3 text-center">
+                        <div class="col-4 trust-item">
+                            <i class="bi bi-truck text-success fs-4"></i>
+                            <p class="mb-0 mt-1 small">Giao nhanh 1-2 ngày</p>
+                        </div>
+                        <div class="col-4 trust-item">
+                            <i class="bi bi-flower1 text-pink-400 fs-4"></i>
+                            <p class="mb-0 mt-1 small">Hoa tươi 100%</p>
+                        </div>
+                        <div class="col-4 trust-item">
+                            <i class="bi bi-shield-check text-success fs-4"></i>
+                            <p class="mb-0 mt-1 small">Đảm bảo chất lượng</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="description-section">
-            <h2 class="description-title">Chi Tiết Sản Phẩm</h2>
-            <div class="description-text">
-                <p><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
+        <!-- Mô tả -->
+        <div class="mt-5">
+            <div class="product-info">
+                <h2 class="section-title heading-font">Chi tiết sản phẩm</h2>
+                <div class="text-muted lh-lg">
+                    <?= nl2br(htmlspecialchars($product['description'])) ?>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 footer-section">
-                    <h6><i class="bi bi-flower1"></i> Cửa Hàng Hoa</h6>
-                    <p>Chúng tôi cung cấp các loại hoa tươi đẹp nhất, được chọn lọc kỹ lưỡng.</p>
-                </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Hỗ Trợ Khách Hàng</h6>
-                    <a href="#">Câu Hỏi Thường Gặp</a>
-                    <a href="#">Liên Hệ Chúng Tôi</a>
-                    <a href="#">Về Chúng Tôi</a>
-                </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Chính Sách</h6>
-                    <a href="#">Chính Sách Giao Hàng</a>
-                    <a href="#">Chính Sách Đổi Trả</a>
-                    <a href="#">Bảo Hành Chất Lượng</a>
-                </div>
-                <div class="col-md-3 footer-section">
-                    <h6>Kết Nối Với Chúng Tôi</h6>
-                    <a href="#">Facebook</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Cửa Hàng Hoa Online. Tất cả các quyền được bảo lưu.</p>
-            </div>
-        </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function changeQty(n) {
+            let input = document.getElementById('quantity');
+            let value = parseInt(input.value);
+            value = value + n;
+            if (value < 1) value = 1;
+            if (value > parseInt(input.max)) value = input.max;
+            input.value = value;
+        }
+    </script>
 </body>
 
 </html>

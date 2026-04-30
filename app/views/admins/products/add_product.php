@@ -2,240 +2,623 @@
 require_once __DIR__ . '/../../../models/category_model.php';
 require_once __DIR__ . '/../../../models/product_model.php';
 require_once __DIR__ . '/../../../../config/config.php';
+
 $category = new CategoryModel();
 $listCategory = $category->getAllCategory();
 
 $product = new ProductModel();
 $listEnumStatus = $product->getValueEnumStatus();
-
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | Thêm sản phẩm</title>
-    <script src="../../../../assets/js/view_image.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin | Thêm sản phẩm mới</title>
+
     <!-- Bootstrap 5 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- Font Awesome Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
             min-height: 100vh;
-            padding: 40px 0;
+            padding: 48px 32px;
+            position: relative;
+        }
+
+        /* Decorative background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="2" fill="rgba(59,130,246,0.05)"/><circle cx="85" cy="20" r="3" fill="rgba(59,130,246,0.05)"/><circle cx="50" cy="85" r="4" fill="rgba(59,130,246,0.05)"/></svg>') repeat;
+            pointer-events: none;
         }
 
         .form-container {
-            max-width: 700px;
+            max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        .card-custom {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        /* Card chính */
+        .form-card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header với gradient đẹp */
+        .card-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 28px 32px;
+            position: relative;
             overflow: hidden;
         }
 
-        .card-header-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-header::after {
+            content: "";
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: white;
-            padding: 25px;
-            text-align: center;
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .card-header-custom h3 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 24px;
+        .card-header h2 i {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .card-header-custom p {
-            margin: 8px 0 0;
-            opacity: 0.9;
-            font-size: 14px;
+        .card-header p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 12px 0 0 0;
         }
 
-        .card-body-custom {
-            padding: 40px;
-            background: white;
+        /* Nút quay lại icon bên phải */
+        .btn-back-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            z-index: 10;
+            position: relative;
+        }
+
+        .btn-back-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+
+        .btn-back-icon:active {
+            transform: translateX(-6px);
+        }
+
+        /* Card body */
+        .card-body {
+            padding: 36px 32px;
+        }
+
+        /* Grid layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px 28px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* Form group */
+        .form-group {
+            margin-bottom: 0;
         }
 
         .form-label {
+            display: block;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-bottom: 10px;
         }
 
         .form-label i {
             margin-right: 8px;
-            color: #667eea;
+            color: #3b82f6;
+            font-size: 0.9rem;
         }
 
-        .form-control,
-        .form-select {
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 10px 15px;
-            transition: all 0.3s ease;
+        .required {
+            color: #ef4444;
+            margin-left: 3px;
         }
 
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
         }
 
-        textarea {
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        textarea.form-control {
             resize: vertical;
-            min-height: 120px;
+            min-height: 100px;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            appearance: none;
+        }
+
+        .error-msg {
+            font-size: 0.7rem;
+            color: #ef4444;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .helper-text {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-area i {
+            font-size: 2rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .upload-area:hover i {
+            color: #3b82f6;
+        }
+
+        .upload-area p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .upload-area small {
+            font-size: 0.65rem;
+            color: #94a3b8;
         }
 
         #preview {
-            max-width: 200px;
-            border-radius: 12px;
-            margin-top: 10px;
-            border: 2px solid #e0e0e0;
-            padding: 5px;
-            background: #f8f9fa;
+            max-width: 380px;
+            max-height: 380px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            object-fit: cover;
+            margin-top: 16px;
+            
         }
 
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            transition: transform 0.2s ease;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
+        /* Status badge */
         .status-badge {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px 15px;
-            border-radius: 12px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #059669;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Divider */
+        .divider {
+            margin: 32px 0 28px;
+            position: relative;
+            text-align: center;
+        }
+
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, #e2e8f0, transparent);
+        }
+
+        .divider span {
+            position: relative;
+            background: white;
+            padding: 0 16px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* Button group */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        /* Submit button */
+        .btn-submit {
+            flex: 1;
+            padding: 12px 24px;
+            font-size: 0.9rem;
             font-weight: 600;
-            border: 1px solid #c3e6cb;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        .required::after {
-            content: " *";
-            color: red;
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
-        hr {
-            margin: 20px 0;
-            border-top: 2px solid #f0f0f0;
+        .btn-submit:disabled {
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Back button footer */
+        .btn-back-footer {
+            padding: 12px 28px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 60px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back-footer:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            color: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        /* Animation */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.2s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+
+            .card-header {
+                padding: 20px 24px;
+            }
+
+            .card-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .card-body {
+                padding: 28px 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-back-footer {
+                justify-content: center;
+            }
+
+            .btn-back-icon {
+                width: 36px;
+                height: 36px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container form-container">
-        <div class="card card-custom">
-            <div class="card-header-custom">
-                <h3><i class="fas fa-plus-circle me-2"></i>Thêm sản phẩm mới</h3>
-                <p>Điền đầy đủ thông tin bên dưới</p>
+    <div class="form-container">
+        <div class="form-card">
+            <!-- Header với nút quay lại bên phải -->
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-plus-circle"></i>
+                        Thêm sản phẩm mới
+                    </h2>
+                    <a href="index.php?controller=product&action=listProduct" class="btn-back-icon" title="Quay lại danh sách">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+                <p class="mb-0 mt-2">Điền thông tin chi tiết để thêm sản phẩm vào cửa hàng</p>
             </div>
-            <div class="card-body-custom">
-                <form action="../../../index.php?controller=product&action=addProduct" method="post" enctype="multipart/form-data" id="addProductForm">
-                    <!-- Tên sản phẩm -->
-                    <div class="mb-4">
-                        <label class="form-label" for="product_name">
-                            <i class="fas fa-tag"></i>Tên sản phẩm <span class="required">*</span>
-                        </label>
-                        <input class="form-control" type="text" id="product_name" name="product_name"
-                            placeholder="Nhập tên sản phẩm" required minlength="3" maxlength="100">
-                    </div>
 
-                    <div class="row">
-                        <!-- Giá -->
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label" for="price">
-                                <i class="fas fa-dollar-sign"></i>Giá <span class="required">*</span>
+            <!-- Form Body -->
+            <div class="card-body">
+                <form action="index.php?controller=product&action=addProduct"
+                    method="post"
+                    enctype="multipart/form-data"
+                    id="addProductForm">
+
+                    <div class="form-grid">
+                        <!-- Tên sản phẩm -->
+                        <div class="full-width form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i>Tên sản phẩm <span class="required">*</span>
                             </label>
-                            <input class="form-control" type="number" id="price" name="price"
-                                placeholder="Nhập giá sản phẩm" required step="0.01" min="0.01" max="9999999">
+                            <input type="text"
+                                class="form-control"
+                                id="product_name"
+                                name="product_name"
+                                placeholder="Ví dụ: Hoa hồng đỏ tình yêu">
+                            <div class="error-msg" id="product_name_error"></div>
+                        </div>
+
+                        <!-- Giá bán -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-dollar-sign"></i>Giá bán <span class="required">*</span>
+                            </label>
+                            <input type="number"
+                                class="form-control"
+                                id="price"
+                                name="price"
+                                placeholder="0"
+                                step="any"
+                                min="0">
+                            <div class="error-msg" id="price_error"></div>
+                            <div class="helper-text">VNĐ - Ví dụ: 150000 = 150.000đ</div>
                         </div>
 
                         <!-- Số lượng -->
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label" for="stock_quantity">
-                                <i class="fas fa-boxes"></i>Số lượng <span class="required">*</span>
-                            </label>
-                            <input class="form-control" type="number" id="stock_quantity" name="stock_quantity"
-                                placeholder="Nhập số lượng" required min="0" max="999999">
-                        </div>
-                    </div>
-
-                    <!-- Mô tả -->
-                    <div class="mb-4">
-                        <label class="form-label" for="description">
-                            <i class="fas fa-align-left"></i>Mô tả
-                        </label>
-                        <textarea class="form-control" name="description" id="description"
-                            placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
-                    </div>
-
-                    <!-- Hình ảnh -->
-                    <div class="mb-4">
-                        <label class="form-label" for="image_url">
-                            <i class="fas fa-image"></i>Hình ảnh
-                        </label>
-                        <input class="form-control" type="file" id="image_url" name="image_url"
-                            onchange="ValidateAndPreviewImage(event)" accept="image/*">
-                        <small class="form-text text-muted">Định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB</small>
-                        <div class="text-center">
-                            <img src="" alt="Xem trước hình ảnh" id="preview" style="display: none; max-width: 200px; margin-top: 10px; border-radius: 12px;">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Trạng thái -->
-                        <div class="col-md-6 mb-4">
+                        <div class="form-group">
                             <label class="form-label">
-                                <i class="fas fa-info-circle"></i>Trạng thái
+                                <i class="fas fa-boxes"></i>Số lượng tồn kho <span class="required">*</span>
                             </label>
-                            <div class="status-badge">
-                                <i class="fas fa-check-circle me-1"></i>Còn hàng
-                            </div>
-                            <input type="hidden" name="status" value="available">
+                            <input type="number"
+                                class="form-control"
+                                id="stock_quantity"
+                                name="stock_quantity"
+                                placeholder="0"
+                                min="0"
+                                value="0">
+                            <div class="error-msg" id="stock_quantity_error"></div>
                         </div>
 
                         <!-- Danh mục -->
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label" for="category_id">
+                        <div class="form-group">
+                            <label class="form-label">
                                 <i class="fas fa-folder"></i>Danh mục <span class="required">*</span>
                             </label>
-                            <select class="form-select" name="category_id" id="category_id" required>
+                            <select class="form-control" name="category_id" id="category_id">
                                 <option value="">-- Chọn danh mục --</option>
                                 <?php foreach ($listCategory as $c): ?>
                                     <option value="<?= $c['category_id'] ?>"><?= htmlspecialchars($c['category_name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                            <div class="error-msg" id="category_id_error"></div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-info-circle"></i>Trạng thái</label>
+                            <div class="status-badge">
+                                <i class="fas fa-check-circle"></i> Còn hàng
+                            </div>
+                            <input type="hidden" name="status" value="available">
+                        </div>
+
+                        <!-- Mô tả -->
+                        <div class="full-width form-group">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i>Mô tả sản phẩm
+                            </label>
+                            <textarea class="form-control"
+                                name="description"
+                                id="description"
+                                rows="5"
+                                placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
+                        </div>
+
+                        <!-- Hình ảnh -->
+                        <div class="full-width form-group">
+                            <label class="form-label">
+                                <i class="fas fa-image"></i>Hình ảnh sản phẩm
+                            </label>
+                            <div class="upload-area" onclick="document.getElementById('image_url').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click để tải lên hình ảnh</p>
+                                <small>JPG, PNG, GIF, WEBP (Tối đa 5MB)</small>
+                            </div>
+                            <input type="file"
+                                id="image_url"
+                                name="image_url"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                style="display: none;">
+                            <div class="text-center">
+                                <img src="" alt="Xem trước" id="preview" style="display: none;">
+                            </div>
                         </div>
                     </div>
 
-                    <hr>
+                    <div class="divider">
+                        <span>THÔNG TIN SẢN PHẨM</span>
+                    </div>
 
-                    <!-- Buttons -->
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary flex-grow-1" onclick="window.history.back()">
-                            <i class="fas fa-arrow-left me-1"></i>Quay lại
-                        </button>
-                        <button type="submit" name="btnAddProduct" class="btn btn-primary-custom flex-grow-1">
-                            <i class="fas fa-save me-1"></i>Thêm sản phẩm
+                    <!-- Button group -->
+                    <div class="button-group">
+                        <a href="index.php?controller=product&action=listProduct" class="btn-back-footer">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                        <button type="submit" name="btnAddProduct" class="btn-submit" id="submitBtn">
+                            <i class="fas fa-save"></i> Thêm sản phẩm
                         </button>
                     </div>
                 </form>
@@ -244,66 +627,159 @@ $listEnumStatus = $product->getValueEnumStatus();
     </div>
 
     <script>
-        // Kiểm tra và xem trước ảnh
-        function ValidateAndPreviewImage(event) {
-            const preview = document.getElementById('preview');
-            const file = event.target.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        // DOM elements
+        const form = document.getElementById('addProductForm');
+        const productName = document.getElementById('product_name');
+        const priceInput = document.getElementById('price');
+        const stockQuantity = document.getElementById('stock_quantity');
+        const categoryId = document.getElementById('category_id');
+        const imageInput = document.getElementById('image_url');
+        const preview = document.getElementById('preview');
+
+        // ========== Helper ==========
+        function showError(input, message) {
+            const errorDiv = document.getElementById(input.id + '_error');
+            if (errorDiv) {
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                input.classList.add('error');
+                input.classList.remove('success');
+            }
+        }
+
+        function clearError(input) {
+            const errorDiv = document.getElementById(input.id + '_error');
+            if (errorDiv) {
+                errorDiv.innerHTML = '';
+                input.classList.remove('error');
+                input.classList.add('success');
+            }
+        }
+
+        // ========== Validation ==========
+        function validateProductName() {
+            const value = productName.value.trim();
+            if (!value) {
+                showError(productName, 'Vui lòng nhập tên sản phẩm');
+                return false;
+            }
+            if (value.length < 3) {
+                showError(productName, 'Tên sản phẩm phải có ít nhất 3 ký tự');
+                return false;
+            }
+            if (value.length > 100) {
+                showError(productName, 'Tên sản phẩm không được quá 100 ký tự');
+                return false;
+            }
+            clearError(productName);
+            return true;
+        }
+
+        function validatePrice() {
+            const value = parseFloat(priceInput.value);
+
+            if (isNaN(value) || priceInput.value === '') {
+                showError(priceInput, 'Vui lòng nhập giá sản phẩm');
+                return false;
+            }
+            if (value < 1000) {
+                showError(priceInput, 'Giá sản phẩm phải từ 1.000đ trở lên');
+                return false;
+            }
+            if (value > 999999999) {
+                showError(priceInput, 'Giá sản phẩm không được quá 999.999.999đ');
+                return false;
+            }
+            clearError(priceInput);
+            return true;
+        }
+
+        function validateStockQuantity() {
+            const value = parseInt(stockQuantity.value);
+            if (isNaN(value)) {
+                showError(stockQuantity, 'Vui lòng nhập số lượng');
+                return false;
+            }
+            if (value < 0) {
+                showError(stockQuantity, 'Số lượng không thể âm');
+                return false;
+            }
+            clearError(stockQuantity);
+            return true;
+        }
+
+        function validateCategory() {
+            const value = categoryId.value;
+            if (!value) {
+                showError(categoryId, 'Vui lòng chọn danh mục');
+                return false;
+            }
+            clearError(categoryId);
+            return true;
+        }
+
+        // ========== Upload ảnh ==========
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024;
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
             if (file) {
-                // Kiểm tra loại file
                 if (!allowedTypes.includes(file.type)) {
-                    alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
-                    event.target.value = '';
+                    alert('Vui lòng chọn file ảnh đúng định dạng (JPG, PNG, GIF, WEBP)');
+                    this.value = '';
                     preview.style.display = 'none';
+                    preview.src = '';
                     return;
                 }
-
-                // Kiểm tra kích thước file
                 if (file.size > maxSize) {
                     alert('Kích thước ảnh không được vượt quá 5MB');
-                    event.target.value = '';
+                    this.value = '';
                     preview.style.display = 'none';
+                    preview.src = '';
                     return;
                 }
-
-                // Xem trước ảnh
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                }
+                };
                 reader.readAsDataURL(file);
             } else {
-                preview.src = '';
                 preview.style.display = 'none';
+                preview.src = '';
             }
+        });
+
+        // Real-time validation
+        productName.addEventListener('input', validateProductName);
+        productName.addEventListener('blur', validateProductName);
+        priceInput.addEventListener('input', validatePrice);
+        priceInput.addEventListener('blur', validatePrice);
+        stockQuantity.addEventListener('input', validateStockQuantity);
+        stockQuantity.addEventListener('blur', validateStockQuantity);
+        categoryId.addEventListener('change', validateCategory);
+
+        function shakeElement(el) {
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 200);
         }
 
-        // Xác thực form trước khi submit
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            const price = parseFloat(document.getElementById('price').value);
-            const quantity = parseInt(document.getElementById('stock_quantity').value);
-            const categoryId = document.getElementById('category_id').value;
+        // ========== Submit - KHÔNG CÓ FORMAT GIÁ ==========
+        form.addEventListener('submit', function(e) {
+            const isValid = validateProductName() && validatePrice() && validateStockQuantity() && validateCategory();
 
-            if (price <= 0) {
+            if (!isValid) {
                 e.preventDefault();
-                alert('Giá sản phẩm phải lớn hơn 0');
+                if (!validateProductName()) shakeElement(productName);
+                else if (!validatePrice()) shakeElement(priceInput);
+                else if (!validateStockQuantity()) shakeElement(stockQuantity);
+                else if (!validateCategory()) shakeElement(categoryId);
                 return;
             }
 
-            if (quantity < 0) {
-                e.preventDefault();
-                alert('Số lượng không được âm');
-                return;
-            }
-
-            if (!categoryId) {
-                e.preventDefault();
-                alert('Vui lòng chọn danh mục');
-                return;
-            }
+            const submitBtn = document.getElementById('submitBtn');
+            //submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse me-2"></i>Đang xử lý...';
         });
     </script>
 </body>

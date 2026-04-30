@@ -24,7 +24,7 @@ class LoginController
                 $adminLogin = $this->adminModel->getByAdminUsername($username);
                 if ($adminLogin && password_verify($password, $adminLogin['password'])) {
                     $_SESSION['admin'] = $adminLogin;
-                    MessageHelper::success("Đăng nhập Admin thành công !!!");
+                    //MessageHelper::success("Đăng nhập Admin thành công !!!");
                     header("Location: /app/views/admins/index.php?controller=dashboard");
                     exit;
                 } else {
@@ -38,7 +38,7 @@ class LoginController
                 if ($customerLogin && password_verify($password, $customerLogin['password'])) {
                     $_SESSION['customer'] = $customerLogin;
                     //MessageHelper::success("Đăng nhập thành công !!!");
-                    header("Location: /app/views/customers/index.php");
+                    header("Location: index.php?router=customers&controller=index&action=index");
                     exit;
                 } else {
                     MessageHelper::error("Sai tài khoản hoặc mặt khẩu !!!");
@@ -52,8 +52,7 @@ class LoginController
     {
         session_unset();
         session_destroy();
-
-        header("Location: index.php?router=login");
+        header("Location: index.php?router=customers&controller=index&action=index");
         exit;
     }
 }

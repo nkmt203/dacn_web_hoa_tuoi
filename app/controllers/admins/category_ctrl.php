@@ -18,7 +18,7 @@ class CategoryController
 
     public function addCategory()
     {
-        if (isset($_POST['btnAddCategory']) && $_POST['btnAddCategory']) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnAddCategory'])) {
             $category_name = $_POST['category_name'];
             $description = $_POST['description'];
             $addCategory = $this->model->addCategory($category_name, $description);
@@ -55,7 +55,7 @@ class CategoryController
     public function updateCategory()
     {
         $category_id = $_GET['category_id'];
-        if (isset($_POST['btnUpdateCategory']) && $_POST['btnUpdateCategory']) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnUpdateCategory'])) {
             $category_name = $_POST['category_name'];
             $description = $_POST['description'];
             $updateCategory = $this->model->updateCategory($category_name, $description, $category_id);

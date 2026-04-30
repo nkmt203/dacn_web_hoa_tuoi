@@ -14,7 +14,7 @@ class ProductController
 
     public function listProduct()
     {
-        $limit = 5; // số sản phẩm / trang
+        $limit = 6; // số sản phẩm / trang
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
 
@@ -31,63 +31,26 @@ class ProductController
 
     public function addProduct()
     {
-        if (isset($_POST['btnAddProduct']) && $_POST['btnAddProduct']) {
-            // Validation
-            if (empty($_POST['product_name']) || empty($_POST['price']) || empty($_POST['stock_quantity']) || empty($_POST['category_id'])) {
-                MessageHelper::error("Vui lòng điền đầy đủ thông tin bắt buộc!");
-                $viewFile = "../../views/admins/products/add_product.php";
-                include __DIR__ . '/../../views/admins/dashboard.php';
-                return;
-            }
-
-            $product_name = trim($_POST['product_name']);
-            $price = floatval($_POST['price']);
-            $description = trim($_POST['description'] ?? '');
-            $stock_quantity = intval($_POST['stock_quantity']);
-            $status = $_POST['status'] ?? 'available';
-            $category_id = intval($_POST['category_id']);
-
-            // Validate price and quantity
-            if ($price <= 0) {
-                MessageHelper::error("Giá sản phẩm phải lớn hơn 0!");
-                $viewFile = "../../views/admins/products/add_product.php";
-                include __DIR__ . '/../../views/admins/dashboard.php';
-                return;
-            }
-
-            if ($stock_quantity < 0) {
-                MessageHelper::error("Số lượng không được âm!");
-                $viewFile = "../../views/admins/products/add_product.php";
-                include __DIR__ . '/../../views/admins/dashboard.php';
-                return;
-            }
-
-            // Handle image upload
-            $image_url = null;
-            if (!empty($_FILES['image_url']['name'])) {
-                $image_url = uploadImage($_FILES['image_url']);
-                if (!$image_url) {
-                    MessageHelper::error("Lỗi tải lên ảnh! Vui lòng kiểm tra định dạng file (JPG, PNG, JPEG)");
-                    $viewFile = "../../views/admins/products/add_product.php";
-                    include __DIR__ . '/../../views/admins/dashboard.php';
-                    return;
-                }
-            }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnAddProduct'])) {
+            $product_name = $_POST['product_name'];
+            $price = $_POST['price'];
+            $description = $_POST['description'];
+            $image_url = uploadImage($_FILES['image_url']);
+            $stock_quantity = $_POST['stock_quantity'];
+            $status = $_POST['status'];
+            $category_id = $_POST['category_id'];
 
             $addProduct = $this->model->addProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id);
             if ($addProduct) {
                 MessageHelper::success("Thêm sản phẩm thành công !!!");
-                header('Location: ../../../index.php?controller=product&action=listProduct');
+                header('Location: index.php?controller=product&action=listProduct');
                 exit;
             } else {
                 MessageHelper::error("Thêm sản phẩm thất bại !!!");
-                $viewFile = "../../views/admins/products/add_product.php";
-                include __DIR__ . '/../../views/admins/dashboard.php';
             }
-        } else {
-            $viewFile = "../../views/admins/products/add_product.php";
-            include __DIR__ . '/../../views/admins/dashboard.php';
         }
+        $viewFile = "../../views/admins/products/add_product.php";
+        include __DIR__ . '/../../views/admins/dashboard.php';
     }
 
     public function deleteProduct()
@@ -109,8 +72,9 @@ class ProductController
 
     public function updateProduct()
     {
-        $product_id = $_GET['product_id'];
-        if (isset($_POST['btnUpdateProduct']) && $_POST['btnUpdateProduct'] && $product_id) {
+        $product_id = $_GET['product_id'] ?? $_POST['product_id'] ?? null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $product_id) {
             $product_name = $_POST['product_name'];
             $price = $_POST['price'];
             $description = $_POST['description'];
@@ -118,7 +82,18 @@ class ProductController
             $stock_quantity = $_POST['stock_quantity'];
             $status = $_POST['status'];
             $category_id = $_POST['category_id'];
-            $updateProduct = $this->model->updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id);
+
+            $updateProduct = $this->model->updateProduct(
+                $product_name,
+                $price,
+                $description,
+                $image_url,
+                $stock_quantity,
+                $status,
+                $category_id,
+                $product_id
+            );
+
             if ($updateProduct) {
                 MessageHelper::success("Cập nhật thành công !!!");
                 header("Location: index.php?controller=product&action=listProduct");
@@ -129,6 +104,7 @@ class ProductController
         } else {
             echo "Không tìm thấy ID cập nhật";
         }
+
         $viewFile = "../../views/admins/products/update_product.php";
         include __DIR__ . '/../../views/admins/dashboard.php';
     }

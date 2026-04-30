@@ -10,7 +10,8 @@ class CategoryModel
     public function getAllCategory()
     {
         $pdo = pdo_connect();
-        $sql = "SELECT * FROM categories";
+        $sql = "SELECT * FROM categories 
+        ORDER BY category_id DESC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

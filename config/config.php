@@ -1,8 +1,9 @@
 <?php
+
 function loadEnv($path)
 {
     if (!file_exists($path)) {
-        die(".env file not found");
+        return;
     }
 
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -17,22 +18,27 @@ function loadEnv($path)
 
 loadEnv(__DIR__ . '/../.env');
 
+function envValue($key, $default = null)
+{
+    return $_ENV[$key] ?? getenv($key) ?? $default;
+}
+
 function pdo_connect()
 {
-    $mode = $_ENV['APP_ENV'] ?? 'local';
+    $mode = envValue('APP_ENV', 'local');
 
     if ($mode === 'local') {
-        $host = $_ENV['DB_HOST'];
-        $port = $_ENV['DB_PORT'];
-        $dbname = $_ENV['DB_NAME'];
-        $user = $_ENV['DB_USER'];
-        $pass = $_ENV['DB_PASS'];
+        $host = envValue('DB_HOST');
+        $port = envValue('DB_PORT');
+        $dbname = envValue('DB_NAME');
+        $user = envValue('DB_USER');
+        $pass = envValue('DB_PASS');
     } else {
-        $host = $_ENV['AIVEN_DB_HOST'];
-        $port = $_ENV['AIVEN_DB_PORT'];
-        $dbname = $_ENV['AIVEN_DB_NAME'];
-        $user = $_ENV['AIVEN_DB_USER'];
-        $pass = $_ENV['AIVEN_DB_PASS'];
+        $host = envValue('AIVEN_DB_HOST');
+        $port = envValue('AIVEN_DB_PORT');
+        $dbname = envValue('AIVEN_DB_NAME');
+        $user = envValue('AIVEN_DB_USER');
+        $pass = envValue('AIVEN_DB_PASS');
     }
 
     try {

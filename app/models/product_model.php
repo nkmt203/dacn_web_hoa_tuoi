@@ -17,7 +17,9 @@ class ProductModel
                 ORDER BY p.product_id DESC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->applyPromotions($products);
+        return $products;
     }
 
     public function getProductsForCustomerPagination($limit, $offset, $selectedCategories = [], $selectedPriceRange = null)
@@ -39,7 +41,7 @@ class ProductModel
             $sql .= " AND p.price >= ? AND p.price <= ?";
         }
 
-        $sql .= " ORDER BY p.product_id DESC LIMIT :limit OFFSET :offset";
+        $sql .= " ORDER BY p.product_id DESC LIMIT ? OFFSET ?";
 
         $stmt = $pdo->prepare($sql);
 
@@ -57,41 +59,45 @@ class ProductModel
             $stmt->bindValue($paramIndex++, (int)$selectedPriceRange[1], PDO::PARAM_INT);
         }
 
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue($paramIndex++, $limit, PDO::PARAM_INT);
+        $stmt->bindValue($paramIndex++, $offset, PDO::PARAM_INT);
         $stmt->execute();
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Add promotion data
-        if (!empty($products)) {
-            $productIds = array_column($products, 'product_id');
-            require_once __DIR__ . '/promotion_model.php';
-            $promotionModel = new PromotionModel();
-            $promotions = $promotionModel->getProductPromotions($productIds);
-
-            // Map promotions to products
-            $promotionMap = [];
-            foreach ($promotions as $promo) {
-                $promotionMap[$promo['product_id']] = $promo;
-            }
-
-            foreach ($products as &$product) {
-                if (isset($promotionMap[$product['product_id']])) {
-                    $promo = $promotionMap[$product['product_id']];
-                    $product['promotion'] = $promo;
-
-                    // Calculate discounted price
-                    if ($promo['discount_type'] === 'percentage') {
-                        $product['discounted_price'] = $product['price'] * (1 - $promo['discount_value'] / 100);
-                    } else {
-                        $product['discounted_price'] = $product['price'] - $promo['discount_value'];
-                    }
-                    $product['discounted_price'] = max(0, $product['discounted_price']);
-                }
-            }
-        }
+        $this->applyPromotions($products);
 
         return $products;
+    }
+
+    public function applyPromotions(&$products)
+    {
+        if (empty($products)) return;
+
+        $productIds = array_column($products, 'product_id');
+        require_once __DIR__ . '/promotion_model.php';
+        $promotionModel = new PromotionModel();
+        $promotions = $promotionModel->getProductPromotions($productIds);
+
+        // Map promotions to products
+        $promotionMap = [];
+        foreach ($promotions as $promo) {
+            $promotionMap[$promo['product_id']] = $promo;
+        }
+
+        foreach ($products as &$product) {
+            if (isset($promotionMap[$product['product_id']])) {
+                $promo = $promotionMap[$product['product_id']];
+                $product['promotion'] = $promo;
+
+                // Calculate discounted price
+                if ($promo['discount_type'] === 'percentage') {
+                    $product['discounted_price'] = $product['price'] * (1 - $promo['discount_value'] / 100);
+                } else {
+                    $product['discounted_price'] = $product['price'] - $promo['discount_value'];
+                }
+                $product['discounted_price'] = max(0, $product['discounted_price']);
+            }
+        }
     }
 
     public function countProductsForCustomer($selectedCategories = [], $selectedPriceRange = null)
@@ -141,7 +147,9 @@ class ProductModel
         ";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->applyPromotions($products);
+        return $products;
     }
 
     public function addProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id)
@@ -189,7 +197,13 @@ class ProductModel
         $sql = "SELECT *FROM products WHERE product_id=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$product_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($product) {
+            $arr = [$product];
+            $this->applyPromotions($arr);
+            return $arr[0];
+        }
+        return false;
     }
 
     public function updateProduct($product_name, $price, $description, $image_url, $stock_quantity, $status, $category_id, $product_id)
@@ -235,7 +249,9 @@ class ProductModel
             LIMIT $limit OFFSET $offset";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->applyPromotions($products);
+        return $products;
     }
 
     public function getTotalProduct()

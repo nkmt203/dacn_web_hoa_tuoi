@@ -343,7 +343,7 @@ $baseUrl     = $baseUrl ?? '?';
 
         .btn-add-cart {
             flex: 1;
-            background: #2b5e3b;
+            background: #3954dbff;
             border: none;
             color: white;
             font-weight: 600;
@@ -358,7 +358,7 @@ $baseUrl     = $baseUrl ?? '?';
         }
 
         .btn-add-cart:hover {
-            background: #1f452b;
+            background: #da3207ff;
             transform: scale(0.98);
         }
 
@@ -466,6 +466,40 @@ $baseUrl     = $baseUrl ?? '?';
                 margin-bottom: 20px;
             }
         }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-fade-up {
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        /* Staggered animation delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
     </style>
 </head>
 
@@ -486,7 +520,18 @@ $baseUrl     = $baseUrl ?? '?';
                 <div class="col-md-4 col-6">
                     <div class="header-icons d-flex justify-content-end align-items-center">
                         <a href="#" class="d-none d-md-block"><i class="bi bi-heart"></i></a>
-                        <a href="#"><i class="bi bi-cart"></i><span class="cart-badge">0</span></a>
+                        <?php
+                        $cartCount = 0;
+                        if (isset($_SESSION['customer'])) {
+                            include_once __DIR__ . '/../../models/cart_model.php';
+                            $cartModel = new CartModel();
+                            $cartCount = $cartModel->getCartCount($_SESSION['customer']['customer_id']);
+                        }
+                        ?>
+                        <a href="index.php?router=customers&controller=cart&action=listCart">
+                            <i class="bi bi-cart"></i>
+                            <span class="cart-badge"><?= $cartCount ?></span>
+                        </a>
                         <?php if (isset($_SESSION['customer'])): ?>
                             <span class="text-dark me-2 d-none d-md-inline"><?php echo htmlspecialchars($_SESSION['customer']['username']); ?></span>
                             <a href="../../../index.php?router=logout"><i class="bi bi-box-arrow-right"></i></a>
@@ -500,7 +545,7 @@ $baseUrl     = $baseUrl ?? '?';
     </header>
 
     <!-- hero banner -->
-    <section class="hero">
+    <section class="hero animate-fade-in">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-7">
@@ -518,9 +563,16 @@ $baseUrl     = $baseUrl ?? '?';
         <div class="row g-4">
             <!-- filter sidebar -->
             <div class="col-lg-3">
-                <div class="filter-card">
-                    <div class="filter-title">
-                        <i class="bi bi-sliders2"></i> Bộ lọc
+                <div class="filter-card animate-fade-up delay-100">
+                    <div class="filter-title d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <i class="bi bi-sliders2"></i> Bộ lọc
+                        </div>
+                        <?php if (!empty($selectedCategories) || !empty($_GET['price_range'])): ?>
+                            <a href="index.php?router=customers" class="text-danger text-decoration-none" style="font-size: 0.85rem; font-weight: 500;">
+                                <i class="bi bi-arrow-clockwise"></i> Đặt lại
+                            </a>
+                        <?php endif; ?>
                     </div>
                     <form id="filterForm" method="GET" action="index.php">
                         <input type="hidden" name="router" value="customers">
@@ -552,7 +604,7 @@ $baseUrl     = $baseUrl ?? '?';
                             <div class="filter-item"><label><input type="radio" name="price_range" value="0-50000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 0 && $selectedPriceRange[1] == 50000 ? 'checked' : ''; ?>> Dưới 50.000đ</label></div>
                             <div class="filter-item"><label><input type="radio" name="price_range" value="50000-100000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 50000 && $selectedPriceRange[1] == 100000 ? 'checked' : ''; ?>> 50.000 - 100.000đ</label></div>
                             <div class="filter-item"><label><input type="radio" name="price_range" value="100000-200000" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 100000 && $selectedPriceRange[1] == 200000 ? 'checked' : ''; ?>> 100.000 - 200.000đ</label></div>
-                            <div class="filter-item"><label><input type="radio" name="price_range" value="200000-<?php echo $maxPrice + 1; ?>" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 200000 ? 'checked' : ''; ?>> Trên 200.000đ</label></div>
+                            <div class="filter-item"><label><input type="radio" name="price_range" value="200000-999999999" <?php echo $selectedPriceRange && $selectedPriceRange[0] == 200000 ? 'checked' : ''; ?>> Trên 200.000đ</label></div>
                         </div>
                     </form>
                 </div>
@@ -560,16 +612,21 @@ $baseUrl     = $baseUrl ?? '?';
 
             <!-- product listing -->
             <div class="col-lg-9">
-                <div class="section-header">
+                <div class="section-header animate-fade-up delay-200">
                     <h2>🌸 Hoa tươi nổi bật</h2>
                     <div class="result-count"><?php echo count($products); ?> sản phẩm</div>
                 </div>
 
                 <div class="row g-4">
                     <?php if (!empty($products)): ?>
+                        <?php $delayCounter = 1; ?>
                         <?php foreach ($products as $product): ?>
-                            <?php $detailUrl = 'index.php?router=customers&controller=detail&action=index&id=' . $product['product_id']; ?>
-                            <div class="col-md-6 col-xl-4">
+                            <?php 
+                                $detailUrl = 'index.php?router=customers&controller=detail&action=index&id=' . $product['product_id']; 
+                                $delayClass = 'delay-' . min(500, $delayCounter * 100);
+                                $delayCounter++;
+                            ?>
+                            <div class="col-md-6 col-xl-4 animate-fade-up <?= $delayClass ?>">
                                 <div class="product-card">
                                     <div class="product-img">
                                         <a href="<?php echo $detailUrl; ?>">
@@ -605,9 +662,13 @@ $baseUrl     = $baseUrl ?? '?';
                                             <?php endif; ?>
                                         </div>
                                         <div class="product-actions">
-                                            <button class="btn-add-cart" <?php echo $product['stock_quantity'] > 0 ? '' : 'disabled'; ?>>
-                                                <i class="bi bi-bag-plus"></i> Thêm giỏ
-                                            </button>
+                                            <form action="index.php?router=customers&controller=cart&action=addCart" method="POST" class="flex-grow-1 m-0">
+                                                <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn-add-cart w-100" <?php echo $product['stock_quantity'] > 0 ? '' : 'disabled'; ?>>
+                                                    <i class="bi bi-bag-plus"></i> Thêm giỏ
+                                                </button>
+                                            </form>
                                             <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
                                         </div>
                                     </div>

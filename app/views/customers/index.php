@@ -19,6 +19,9 @@ switch ($controllerURL) {
     case 'detail':
         $controllerPath = __DIR__ . '/../../controllers/customers/detail_ctrl.php';
         break;
+    case 'cart':
+        $controllerPath = __DIR__ . '/../../controllers/customers/cart_ctrl.php';
+        break;
     default:
         break;
 }

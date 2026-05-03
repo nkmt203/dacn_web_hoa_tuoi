@@ -18,11 +18,11 @@
 
     <style>
         :root {
-            --primary-color: #e05a7e;
-            --primary-gradient: linear-gradient(135deg, #e05a7e, #c4456c);
-            --secondary-color: #9b6b43;
-            --accent-color: #c7a17a;
-            --bg-color: #fffafb;
+            --primary-color: #e91e63;
+            --primary-gradient: linear-gradient(135deg, #e91e63, #c2185b);
+            --secondary-color: #C2185B;
+            --accent-color: #F06292;
+            --bg-color: #FFF5F7;
             --card-bg: #ffffff;
             --text-main: #2d2a24;
             --text-muted: #6b5a4c;
@@ -32,6 +32,42 @@
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
             --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.06);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-icons {
+            gap: 1.2rem;
+        }
+
+        .header-icons a {
+            color: var(--text-main);
+            font-size: 1.4rem;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .header-icons a:hover {
+            color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid white;
         }
 
         body {
@@ -290,6 +326,26 @@
                         <i class="bi bi-flower2"></i> FlowerTown
                     </a>
                 </div>
+                <div class="col-6">
+                    <div class="header-icons d-flex justify-content-end align-items-center">
+                        <a href="index.php?router=customers&controller=order&action=listOrders" title="Đơn hàng của tôi"><i class="bi bi-receipt"></i></a>
+                        <?php
+                        $cartCount = 0;
+                        if (isset($_SESSION['customer'])) {
+                            require_once __DIR__ . '/../../../models/cart_model.php';
+                            $cartModel = new CartModel();
+                            $cartCount = $cartModel->getCartCount($_SESSION['customer']['customer_id']);
+                        }
+                        ?>
+                        <a href="index.php?router=customers&controller=cart&action=listCart">
+                            <i class="bi bi-bag"></i>
+                            <span class="cart-badge"><?= $cartCount ?></span>
+                        </a>
+                        <?php if (isset($_SESSION['customer'])): ?>
+                            <a href="index.php?router=logout" title="Đăng xuất"><i class="bi bi-box-arrow-right"></i></a>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -385,7 +441,7 @@
             <?php if (!empty($listCart)): ?>
                 <div class="col-lg-4 animate-fade-up" style="animation-delay: 100ms">
                     <div class="summary-card">
-                        <h2 class="summary-title heading-font">Thanh toán</h2>
+                        <h2 class="summary-title heading-font">Đơn hàng</h2>
                         
                         <div class="summary-row">
                             <span>Tạm tính</span>
@@ -401,8 +457,8 @@
                             <span style="color: var(--primary-color)"><?= number_format($total, 0, ',', '.') ?>đ</span>
                         </div>
 
-                        <a href="index.php?router=customers&controller=checkout&action=index" class="btn btn-checkout">
-                            TIẾN HÀNH THANH TOÁN <i class="bi bi-arrow-right"></i>
+                        <a href="index.php?router=customers&controller=order&action=index" class="btn btn-checkout">
+                            TIẾN HÀNH ĐẶT HÀNG <i class="bi bi-arrow-right"></i>
                         </a>
 
                         <a href="index.php?router=customers" class="btn btn-continue">

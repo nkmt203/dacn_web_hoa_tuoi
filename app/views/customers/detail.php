@@ -20,11 +20,11 @@
 
     <style>
         :root {
-            --primary-color: #e05a7e;
-            --primary-gradient: linear-gradient(135deg, #e05a7e, #c4456c);
-            --secondary-color: #9b6b43;
-            --accent-color: #c7a17a;
-            --bg-color: #fffafb;
+            --primary-color: #e91e63;
+            --primary-gradient: linear-gradient(135deg, #e91e63, #c2185b);
+            --secondary-color: #C2185B;
+            --accent-color: #F06292;
+            --bg-color: #FFF5F7;
             --card-bg: #ffffff;
             --text-main: #2d2a24;
             --text-muted: #6b5a4c;
@@ -374,6 +374,7 @@
                 <div class="col-6">
                     <div class="header-icons d-flex justify-content-end align-items-center">
                         <a href="#"><i class="bi bi-heart"></i></a>
+                        <a href="index.php?router=customers&controller=order&action=listOrders" title="Đơn hàng của tôi"><i class="bi bi-receipt"></i></a>
                         <?php
                         $cartCount = 0;
                         if (isset($_SESSION['customer'])) {

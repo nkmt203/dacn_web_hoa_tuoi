@@ -1,181 +1,344 @@
+<?php
+
+/** @var array $product */
+/** @var array $category */
+?>
 <!DOCTYPE html>
 <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= htmlspecialchars($product['product_name']) ?> - Bloom & Co</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title><?= htmlspecialchars($product['product_name']) ?> - FlowerTown</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+        :root {
+            --primary-color: #e05a7e;
+            --primary-gradient: linear-gradient(135deg, #e05a7e, #c4456c);
+            --secondary-color: #9b6b43;
+            --accent-color: #c7a17a;
+            --bg-color: #fffafb;
+            --card-bg: #ffffff;
+            --text-main: #2d2a24;
+            --text-muted: #6b5a4c;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --radius-lg: 32px;
+            --radius-md: 16px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #fdfaf7;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
         }
 
         .heading-font {
             font-family: 'Playfair Display', serif;
         }
 
-        /* container thu nhỏ, thoáng hơn */
-        .main-container {
+        /* Modern Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: var(--secondary-color);
+            font-size: 1.8rem;
+        }
+
+        .header-icons a {
+            color: var(--text-main);
+            font-size: 1.4rem;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-left: 1.2rem;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid white;
+        }
+
+        /* Main Container */
+        .product-detail-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            margin-top: 2rem;
             max-width: 1000px;
-            padding-left: 1rem;
-            padding-right: 1rem;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* giảm khoảng cách dọc, tạo cảm giác gọn nhưng vẫn thoáng */
-        .product-info {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            padding: 1.6rem 1.8rem;
-            transition: all 0.2s;
+        .product-image-container {
+            padding: 2rem;
+            background: #faf7f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* ảnh bo góc nhẹ, kích thước cân đối */
-        .product-image img {
-            border-radius: 24px;
-            transition: transform 0.4s ease;
-            max-height: 540px;
+        .product-image-container img {
+            border-radius: var(--radius-md);
             width: 100%;
+            height: auto;
+            max-height: 500px;
             object-fit: cover;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
         }
 
-        .product-image:hover img {
+        .product-image-container:hover img {
             transform: scale(1.02);
         }
 
-        /* tiêu đề sản phẩm nhỏ hơn 1 chút nhưng vẫn nổi bật */
-        .product-title {
-            font-size: 1.85rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+        .product-info-container {
+            padding: 2rem 2.5rem;
         }
 
-        /* giá chính */
-        .price {
+        .breadcrumb {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .product-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #3a2c23;
+            margin-bottom: 0.8rem;
+            line-height: 1.1;
+        }
+
+        .price-section {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        .current-price {
             font-size: 2rem;
             font-weight: 800;
-            color: #e05a7e;
+            color: var(--primary-color);
         }
 
-        .original-price {
-            font-size: 1.1rem;
+        .old-price {
+            font-size: 1.2rem;
             text-decoration: line-through;
-            color: #aaa;
+            color: #b6a088;
         }
 
-        /* button thêm giỏ hàng - gọn hơn nhưng vẫn dễ bấm */
-        .btn-add-cart {
-            background: linear-gradient(135deg, #e05a7e, #c4456c);
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .in-stock {
+            background: #e6f4ea;
+            color: #1e7e34;
+        }
+
+        .out-of-stock {
+            background: #fce8e8;
+            color: #d93025;
+        }
+
+        .qty-label {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .qty-selector {
+            display: flex;
+            align-items: center;
+            background: #f8f1ea;
+            border-radius: 12px;
+            padding: 4px;
+            width: fit-content;
+            margin-bottom: 2.5rem;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 40px;
-            transition: all 0.25s;
+            background: white;
+            color: var(--text-main);
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .qty-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .qty-input {
+            width: 60px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .btn-add-cart {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
         }
 
         .btn-add-cart:hover {
-            background: linear-gradient(135deg, #c4456c, #e05a7e);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(224, 90, 126, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(224, 90, 126, 0.3);
+            color: white;
         }
 
-        /* nút wishlist tròn nhỏ gọn */
+        .btn-add-cart:disabled {
+            background: #e0e0e0;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-wishlist {
-            width: 48px;
-            height: 48px;
-            border-radius: 60px;
-            border: 1.5px solid #e2e2e2;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            border: 2px solid #f0e6db;
             background: white;
-            transition: all 0.2s;
+            color: #d63031;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
         }
+
         .btn-wishlist:hover {
-            background: #fff0f3;
-            border-color: #e05a7e;
+            background: #fff5f5;
+            border-color: #ffcccc;
         }
 
-        .trust-item i {
+        .description-section {
+            margin-top: 2rem;
+            border-top: 1px solid #f3e9e2;
+            padding-top: 2.5rem;
+        }
+
+        .description-title {
             font-size: 1.6rem;
-        }
-        .trust-item p {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        /* các khoảng cách margin/padding được thu gọn nhưng giữ bố cục đẹp mắt */
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #3a2c23;
+            position: relative;
+            display: inline-block;
         }
 
-        /* header thu nhỏ padding, gọn hơn */
-        .custom-header {
-            padding: 0.65rem 0;
+        .description-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 2px;
         }
 
-        /* tùy chỉnh input số lượng nhỏ gọn hơn */
-        .qty-group {
-            width: 136px;
-        }
-        .qty-group input {
-            padding: 0.4rem 0;
-            font-size: 0.95rem;
-        }
-        .qty-group button {
-            padding: 0.4rem 0.85rem;
+        .description-content {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            max-width: 900px;
         }
 
-        /* điều chỉnh breadcrumb gọn hơn */
-        .breadcrumb {
-            margin-bottom: 1.2rem;
-            font-size: 0.85rem;
+        .product-description-full {
+            background: #fffdfb;
         }
-        
-        /* giảm khoảng cách giữa các hàng trong mô tả */
-        .product-description {
-            font-size: 0.95rem;
-            line-height: 1.55;
-        }
-        
-        @media (max-width: 768px) {
-            .product-info {
-                padding: 1.25rem;
-            }
-            .product-title {
-                font-size: 1.6rem;
-            }
-            .price {
-                font-size: 1.8rem;
-            }
-            .btn-add-cart {
-                padding: 10px 18px;
-            }
-        }
-        
-        /* giữ hiệu ứng và màu sắc tự nhiên */
-        .text-pink-400 {
-            color: #e05a7e;
-        }
-        .bg-soft-pink {
-            background-color: #fff3f5;
-        }
-        .hover-lift {
-            transition: transform 0.2s ease;
-        }
-        
+
         /* Animations */
         @keyframes fadeUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -183,203 +346,182 @@
         }
 
         .animate-fade-up {
-            opacity: 0;
-            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0, 0, 1) forwards;
         }
 
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
+        @media (max-width: 992px) {
+            .product-info-container {
+                padding: 2rem;
+            }
+
+            .product-title {
+                font-size: 2.2rem;
+            }
+        }
     </style>
 </head>
 
-<body class="animate-fade-up">
+<body>
 
-    <!-- Header thu nhỏ hơn: padding dọc giảm, thanh tìm kiếm nhỏ gọn nhưng vẫn đầy đủ chức năng -->
-    <header class="bg-white border-bottom sticky-top shadow-sm">
-        <div class="container py-2 custom-header">
-            <div class="row align-items-center g-2">
-                <div class="col-md-3 col-6">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-flower1 fs-3 text-pink-400"></i>
-                        <span class="heading-font fs-5 fw-bold">Bloom & Co</span>
-                    </div>
-                </div>
-                <div class="col-md-5 col-12 mt-2 mt-md-0">
-                    <input type="text" class="form-control form-control-sm rounded-pill" placeholder="Tìm kiếm hoa tươi...">
-                </div>
-                <div class="col-md-4 col-6 text-end">
-                    <a href="#" class="me-3 text-dark fs-5"><i class="bi bi-heart"></i></a>
-                    <?php
-                    $cartCount = 0;
-                    if (isset($_SESSION['customer'])) {
-                        require_once __DIR__ . '/../../models/cart_model.php';
-                        $cartModel = new CartModel();
-                        $cartCount = $cartModel->getCartCount($_SESSION['customer']['customer_id']);
-                    }
-                    ?>
-                    <a href="index.php?router=customers&controller=cart&action=listCart" class="me-3 text-dark fs-5 position-relative">
-                        <i class="bi bi-cart"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill" style="font-size: 0.7rem;"><?= $cartCount ?></span>
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <a href="index.php?router=customers" class="logo">
+                        <i class="bi bi-flower2"></i> FlowerTown
                     </a>
-                    <?php if (isset($_SESSION['customer'])): ?>
-                        <span class="small fw-medium">Xin chào, <?= htmlspecialchars($_SESSION['customer']['username']) ?></span>
-                    <?php endif; ?>
+                </div>
+                <div class="col-6">
+                    <div class="header-icons d-flex justify-content-end align-items-center">
+                        <a href="#"><i class="bi bi-heart"></i></a>
+                        <?php
+                        $cartCount = 0;
+                        if (isset($_SESSION['customer'])) {
+                            require_once __DIR__ . '/../../models/cart_model.php';
+                            $cartModel = new CartModel();
+                            $cartCount = $cartModel->getCartCount($_SESSION['customer']['customer_id']);
+                        }
+                        ?>
+                        <a href="index.php?router=customers&controller=cart&action=listCart">
+                            <i class="bi bi-bag"></i>
+                            <span class="cart-badge"><?= $cartCount ?></span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="container main-container py-4">
-        <!-- Breadcrumb nhỏ gọn -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-3">
-                <li class="breadcrumb-item"><a href="index.php?router=customers&controller=index&action=index" class="text-decoration-none text-secondary">Trang chủ</a></li>
-                <li class="breadcrumb-item active fw-semibold" aria-current="page"><?= htmlspecialchars($product['product_name']) ?></li>
-            </ol>
-        </nav>
-
-        <div class="row g-4 animate-fade-up delay-100">
-            <!-- Cột ảnh sản phẩm, kích thước cân đối -->
-            <div class="col-lg-6">
-                <div class="product-image bg-white rounded-4 overflow-hidden shadow-sm">
-                    <img src="uploads/<?= htmlspecialchars($product['image_url']) ?>"
-                        class="img-fluid w-100"
-                        alt="<?= htmlspecialchars($product['product_name']) ?>"
-                        onerror="this.src='https://placehold.co/600x600/pink/white?text=No+Image';">
-                </div>
-            </div>
-
-            <!-- Thông tin chi tiết (đã thu gọn padding và spacing) -->
-            <div class="col-lg-6">
-                <div class="product-info h-100 d-flex flex-column">
-                    <div>
-                        <p class="text-uppercase small text-muted mb-1"><?= htmlspecialchars($category['category_name']) ?></p>
-                        <h1 class="product-title heading-font mb-2">
-                            <?= htmlspecialchars($product['product_name']) ?>
-                        </h1>
-                        
-                        <!-- Rating gọn nhẹ -->
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <span class="text-warning">★★★★☆</span>
-                            <small class="text-muted">(128 đánh giá)</small>
-                        </div>
-
-                        <!-- Giá: thiết kế không thay đổi logic -->
-                        <div class="mb-3">
-                            <?php if (isset($product['discounted_price'])): ?>
-                                <span class="price me-2"><?= number_format($product['discounted_price'], 0, ',', '.') ?>đ</span>
-                                <span class="original-price"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
-                            <?php else: ?>
-                                <span class="price"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- Tình trạng kho, hiển thị nhỏ gọn -->
-                        <div class="mb-3">
-                            <?php if ($product['stock_quantity'] > 0): ?>
-                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fs-6 fw-medium">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Còn <?= $product['stock_quantity'] ?> sản phẩm
-                                </span>
-                            <?php else: ?>
-                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">
-                                    <i class="bi bi-x-circle-fill me-1"></i> Hết hàng
-                                </span>
-                            <?php endif; ?>
-                        </div>
+    <div class="container py-5">
+        <div class="product-detail-card animate-fade-up">
+            <div class="row g-0">
+                <div class="col-lg-6">
+                    <div class="product-image-container">
+                        <img src="uploads/<?= htmlspecialchars($product['image_url']) ?>"
+                            alt="<?= htmlspecialchars($product['product_name']) ?>"
+                            onerror="this.src='https://placehold.co/800x1000?text=Premium+Flower'">
                     </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="product-info-container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb list-unstyled d-flex gap-2">
+                                <li><a href="index.php?router=customers">Cửa hàng</a></li>
+                                <li class="text-muted">/</li>
+                                <li class="text-muted"><?= htmlspecialchars($category['category_name']) ?></li>
+                            </ol>
+                        </nav>
 
-                    <!-- Form thêm giỏ hàng giữ nguyên logic, chỉ giảm kích thước các thành phần -->
-                    <form action="index.php?controller=cart&action=addCart" method="POST" class="mt-2">
-                        <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                        <h1 class="product-title heading-font"><?= htmlspecialchars($product['product_name']) ?></h1>
 
-                        <!-- Chọn số lượng - nhóm gọn hơn -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="text-warning">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                            </div>
+                            <span class="text-muted small fw-bold">(4.8/5 từ 120 đánh giá)</span>
+                        </div>
+
+                        <div class="price-section">
+                            <?php if (isset($product['discounted_price'])): ?>
+                                <span
+                                    class="current-price"><?= number_format($product['discounted_price'], 0, ',', '.') ?>đ</span>
+                                <span class="old-price"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
+                            <?php else: ?>
+                                <span
+                                    class="current-price"><?php echo number_format($product['price'], 0, ',', '.'); ?>đ</span>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="mb-4">
-                            <label class="form-label fw-semibold small text-secondary">Số lượng</label>
-                            <div class="input-group qty-group">
-                                <button type="button" class="btn btn-outline-secondary rounded-start-3" onclick="changeQty(-1)">−</button>
-                                <input type="number" id="quantity" name="quantity" 
-                                       class="form-control text-center border-secondary-subtle" 
-                                       value="1" min="1" max="<?= $product['stock_quantity'] ?>">
-                                <button type="button" class="btn btn-outline-secondary rounded-end-3" onclick="changeQty(1)">+</button>
+                            <?php if ($product['stock_quantity'] > 0): ?>
+                                <div class="stock-status in-stock">
+                                    <i class="bi bi-check-circle-fill"></i> Còn hàng (<?= $product['stock_quantity'] ?> sản
+                                    phẩm)
+                                </div>
+                            <?php else: ?>
+                                <div class="stock-status out-of-stock">
+                                    <i class="bi bi-x-circle-fill"></i> Tạm hết hàng
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <form action="index.php?router=customers&controller=cart&action=addCart" method="POST">
+                            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+
+                            <div class="qty-label">Số lượng</div>
+                            <div class="qty-selector">
+                                <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+                                <input type="number" id="quantity" name="quantity" class="qty-input" value="1" min="1"
+                                    max="<?= $product['stock_quantity'] ?>">
+                                <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn-add-cart"
+                                    <?= $product['stock_quantity'] <= 0 ? 'disabled' : '' ?>>
+                                    <i class="bi bi-bag-plus-fill"></i> THÊM VÀO GIỎ HÀNG
+                                </button>
+                                <button type="button" class="btn-wishlist">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-5 d-flex flex-wrap gap-4 pt-4 border-top">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-truck text-success fs-4"></i>
+                                <span class="small fw-bold text-muted">Giao hàng 2h</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-check text-success fs-4"></i>
+                                <span class="small fw-bold text-muted">Hoa tươi 100%</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-counterclockwise text-success fs-4"></i>
+                                <span class="small fw-bold text-muted">Đổi trả dễ dàng</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Hàng nút bấm: thêm vào giỏ & yêu thích -->
-                        <div class="d-flex gap-3 align-items-center">
-                            <button type="submit" class="btn btn-add-cart text-white flex-grow-1 d-flex align-items-center justify-content-center gap-2" 
-                                    <?= $product['stock_quantity'] <= 0 ? 'disabled' : '' ?>>
-                                <i class="bi bi-cart-plus fs-5"></i> Thêm vào giỏ
-                            </button>
-                            <button type="button" class="btn-wishlist d-flex align-items-center justify-content-center" aria-label="Yêu thích">
-                                <i class="bi bi-heart text-danger fs-5"></i>
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- Trust badges: giảm padding text, gọn hơn nhưng vẫn đủ nổi bật -->
-                    <div class="row mt-4 g-2 text-center pt-2 border-top">
-                        <div class="col-4 trust-item">
-                            <i class="bi bi-truck text-success fs-5"></i>
-                            <p class="mb-0 mt-1 small fw-semibold">Giao nhanh 1-2 ngày</p>
-                        </div>
-                        <div class="col-4 trust-item">
-                            <i class="bi bi-flower1 text-pink-400 fs-5"></i>
-                            <p class="mb-0 mt-1 small fw-semibold">Hoa tươi 100%</p>
-                        </div>
-                        <div class="col-4 trust-item">
-                            <i class="bi bi-shield-check text-success fs-5"></i>
-                            <p class="mb-0 mt-1 small fw-semibold">Đảm bảo chất lượng</p>
-                        </div>
+            <!-- Full-width Description Section -->
+            <div class="product-description-full px-4 px-md-5 pb-5">
+                <div class="description-section pt-5">
+                    <h3 class="description-title heading-font">Mô tả sản phẩm</h3>
+                    <div class="description-content">
+                        <?= nl2br(htmlspecialchars($product['description'])) ?>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Mô tả chi tiết - font chữ dễ đọc, giảm khoảng cách trên dưới -->
-        <div class="mt-5">
-            <div class="product-info p-4">
-                <h2 class="section-title heading-font mb-3">🌸 Chi tiết sản phẩm</h2>
-                <div class="text-secondary product-description">
-                    <?= nl2br(htmlspecialchars($product['description'])) ?>
-                </div>
-            </div>
-        </div>
-        
-        <!-- gợi ý nhẹ: có thể thêm phần sản phẩm liên quan (tuỳ chỉnh sau) nhưng giữ layout gọn -->
-        <div class="mt-4 text-center small text-muted">
-            <i class="bi bi-flower2 me-1"></i> Bloom & Co – Mang thiên nhiên vào từng góc nhỏ
-        </div>
     </div>
+
+    <footer class="py-5 mt-5 bg-white border-top">
+        <div class="container text-center">
+            <div class="logo justify-content-center mb-3">
+                <i class="bi bi-flower2"></i> FlowerTown
+            </div>
+            <p class="text-muted small">© 2024 FlowerTown. Kiến tạo không gian từ những đóa hoa.</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function changeQty(n) {
             let input = document.getElementById('quantity');
-            if (!input) return;
-            let value = parseInt(input.value);
-            if (isNaN(value)) value = 1;
-            value = value + n;
+            let value = parseInt(input.value) + n;
             let min = parseInt(input.min) || 1;
             let max = parseInt(input.max);
             if (value < min) value = min;
-            if (!isNaN(max) && value > max) value = max;
+            if (max && value > max) value = max;
             input.value = value;
         }
-
-        // Optional: tự động đồng bộ và ngăn người dùng nhập số vượt quá tồn kho hoặc nhỏ hơn 1
-        document.addEventListener('DOMContentLoaded', function() {
-            let qtyInput = document.getElementById('quantity');
-            if (qtyInput) {
-                qtyInput.addEventListener('change', function() {
-                    let val = parseInt(this.value);
-                    let min = parseInt(this.min) || 1;
-                    let max = parseInt(this.max);
-                    if (isNaN(val)) val = min;
-                    if (val < min) this.value = min;
-                    if (!isNaN(max) && val > max) this.value = max;
-                });
-            }
-        });
     </script>
 </body>
+
 </html>

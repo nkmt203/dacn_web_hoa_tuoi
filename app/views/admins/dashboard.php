@@ -410,8 +410,11 @@
 
             <div class="brand">
                 <div class="brand-left">
-                    <button class="sidebar-toggle-btn" type="button" id="toggleSidebarBtn">
+                    <button class="sidebar-toggle-btn d-none d-md-flex" type="button" id="toggleSidebarBtnDesktop">
                         <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="sidebar-toggle-btn d-md-none" type="button" id="closeSidebarBtnMobile">
+                        <i class="fas fa-times"></i>
                     </button>
                     <div class="logo-glow">✦ K.M.<span style="color:#bae6fd;">Twain</span></div>
                     <div class="logo-icon-small">✦</div>
@@ -556,7 +559,7 @@
     <!-- TOP BAR -->
     <nav class="navbar navbar-expand navbar-admin fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-glass" type="button" id="toggleSidebarBtn">
+            <button class="btn btn-glass" type="button" id="toggleSidebarBtnMobile">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="ms-auto d-flex align-items-center">
@@ -600,8 +603,9 @@
     <script>
     (function() {
         const sidebar = document.getElementById('adminSidebar');
-        const toggleBtn = document.getElementById('toggleSidebarBtn');
-        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const toggleBtnDesktop = document.getElementById('toggleSidebarBtnDesktop');
+        const toggleBtnMobile = document.getElementById('toggleSidebarBtnMobile');
+        const closeBtnMobile = document.getElementById('closeSidebarBtnMobile');
         const BREAKPOINT = 768;
 
         function isMobile() {
@@ -622,7 +626,7 @@
         }
 
         function updateCollapsedDropdownPosition() {
-            if (!sidebar.classList.contains('collapsed') || isMobile()) return;
+            if (!sidebar || !sidebar.classList.contains('collapsed') || isMobile()) return;
 
             sidebar.querySelectorAll('.nav-item').forEach(item => {
                 const dropdown = item.querySelector('.dropdown-collapsed');
@@ -643,15 +647,11 @@
         }
 
         function toggleMobileSidebar() {
-            const isOpen = sidebar.classList.contains('show-mobile');
-
-            if (isOpen) {
-                sidebar.classList.remove('show-mobile', 'collapsed');
-                sidebar.style.transform = 'translateX(-100%)';
-            } else {
-                sidebar.classList.add('show-mobile');
-                sidebar.classList.remove('collapsed');
+            sidebar.classList.toggle('show-mobile');
+            if (sidebar.classList.contains('show-mobile')) {
                 sidebar.style.transform = 'translateX(0)';
+            } else {
+                sidebar.style.transform = 'translateX(-100%)';
             }
         }
 
@@ -707,11 +707,18 @@
         }
 
         document.addEventListener('click', function(e) {
+            // Đóng mobile sidebar khi click ra ngoài
+            if (isMobile() && sidebar.classList.contains('show-mobile')) {
+                if (!e.target.closest('.sidebar') && !e.target.closest('#toggleSidebarBtnMobile')) {
+                    toggleMobileSidebar();
+                }
+            }
             if (!e.target.closest('.sidebar')) closeAllDropdowns();
         });
 
-        if (toggleBtn) toggleBtn.addEventListener('click', handleSidebarToggle);
-        if (mobileBtn) mobileBtn.addEventListener('click', handleSidebarToggle);
+        if (toggleBtnDesktop) toggleBtnDesktop.addEventListener('click', handleSidebarToggle);
+        if (toggleBtnMobile) toggleBtnMobile.addEventListener('click', handleSidebarToggle);
+        if (closeBtnMobile) closeBtnMobile.addEventListener('click', toggleMobileSidebar);
 
         window.addEventListener('resize', initSidebarState);
         window.addEventListener('scroll', updateCollapsedDropdownPosition);

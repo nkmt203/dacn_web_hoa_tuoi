@@ -236,7 +236,7 @@
                 
                 <div class="text-center mt-4">
                     <p class="small text-muted mb-0">Chưa có tài khoản? 
-                        <a href="register.php" class="register-link">Đăng ký ngay</a>
+                        <a href="index.php?router=register" class="register-link">Đăng ký ngay</a>
                     </p>
                 </div>
             </div>

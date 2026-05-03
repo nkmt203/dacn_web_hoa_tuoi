@@ -55,4 +55,40 @@ class LoginController
         header("Location: index.php?router=customers&controller=index&action=index");
         exit;
     }
+
+    public function register()
+    {
+        if (isset($_POST['btnRegister'])) {
+            $username = trim($_POST['username']);
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
+            $confirm_password = $_POST['confirm_password'];
+            $full_name = trim($_POST['full_name']);
+            $phone = trim($_POST['phone']);
+            $address = trim($_POST['address']);
+
+            if ($password !== $confirm_password) {
+                MessageHelper::error("Mật khẩu xác nhận không khớp!");
+            } elseif ($this->customerModel->checkExists($username, $email)) {
+                MessageHelper::error("Tên đăng nhập hoặc email đã tồn tại!");
+            } else {
+                $data = [
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => $password,
+                    'full_name' => $full_name,
+                    'phone' => $phone,
+                    'address' => $address
+                ];
+                if ($this->customerModel->createAccountCustomer($data)) {
+                    MessageHelper::success("Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+                    header("Location: index.php?router=login");
+                    exit;
+                } else {
+                    MessageHelper::error("Có lỗi xảy ra trong quá trình đăng ký!");
+                }
+            }
+        }
+        require_once __DIR__ . '/../../views/register.php';
+    }
 }

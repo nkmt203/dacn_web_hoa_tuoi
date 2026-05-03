@@ -13,6 +13,11 @@ switch ($router) {
         $ctrl = new LoginController();
         $ctrl->logout();
         break;
+    case 'register':
+        require_once __DIR__ . '/app/controllers/login/login_ctrl.php';
+        $ctrl = new LoginController();
+        $ctrl->register();
+        break;
     case 'customers':
         require_once __DIR__ . '/app/views/customers/index.php';
         break;
@@ -20,6 +25,6 @@ switch ($router) {
         require_once __DIR__ . '/app/views/admins/index.php';
         break;
     default:
-        echo "<h1>404 ERROR !</h1>";
+        echo "<h1>404 ERROR !</h1>"; 
         break;
 }
